@@ -4,7 +4,6 @@ import uuid
 
 from apify_client import ApifyClient
 from langchain_core.documents import Document
-from pyramidpy_tools.kb.tools import get_vectorstore
 from langchain_community.utilities import ApifyWrapper
 from pyramidpy_tools.settings import settings
 
@@ -52,12 +51,7 @@ class ApifyAPI:
             ),
         )
         docs = loader.load()
-        if collection:
-            vector_store = get_vectorstore(collection)
-            vector_store.add(docs)
-            return docs
-        else:
-            return docs
+        return docs
      
 
     async def web_scraper(
