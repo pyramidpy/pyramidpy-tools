@@ -27,7 +27,7 @@ dependencies = [
     "chromadb>=0.5.18",
     "sqlite-s3-query>=0.0.82",
     "libsql-experimental>=0.0.41",
-    "prefect==3.0.0",
+    "prefect>=3.1.2",
     "slack-sdk>=3.33.3",
     "nanoid>=2.0.0",
     "sqlalchemy-libsql>=0.1.0",

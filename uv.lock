@@ -3466,7 +3466,7 @@ wheels = [
 
 [[package]]
 name = "prefect"
-version = "3.0.0"
+version = "3.1.12"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiosqlite" },
@@ -3495,6 +3495,7 @@ dependencies = [
     { name = "jinja2-humanize-extension" },
     { name = "jsonpatch" },
     { name = "jsonschema" },
+    { name = "opentelemetry-api" },
     { name = "orjson" },
     { name = "packaging" },
     { name = "pathspec" },
@@ -3506,6 +3507,7 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "python-dateutil" },
     { name = "python-slugify" },
+    { name = "python-socks", extra = ["asyncio"] },
     { name = "pytz" },
     { name = "pyyaml" },
     { name = "readchar" },
@@ -3521,9 +3523,9 @@ dependencies = [
     { name = "uvicorn" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/26/aceec1a63ecd719a06e9fc0476685af83b910a92c90d4de6ad0a46b193d0/prefect-3.0.0.tar.gz", hash = "sha256:e6da7ae54612a36423ea2bb224cf62b6aed56cfd320a44be2377c7af899c3193", size = 5762784 }
+sdist = { url = "https://files.pythonhosted.org/packages/57/a3/4de30355bf4aa5401e5e692e7d09ac95446c374a0cfa7771361da4eaacd2/prefect-3.1.12.tar.gz", hash = "sha256:c61ab39ea9d195395d5ec5e9c9e4d199837dc30ae9315b9e390ffd451f49bbe2", size = 5922106 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e0/ce/f7033bf2b71fb880e6e6ef8bd298e46292472a61789660e5b9e6565d9cc2/prefect-3.0.0-py3-none-any.whl", hash = "sha256:066b0cbbd24b99ff14412e2b3dedb4f317d4d8aa81b2e032ef43ae667851f321", size = 6031680 },
+    { url = "https://files.pythonhosted.org/packages/99/85/56833e5619f79c52dbb52c90d6d7140664ba8d953e622f68d0a4c8cf91b4/prefect-3.1.12-py3-none-any.whl", hash = "sha256:99a3b0078046c69e72a4285920136489c74b93d0f99b4e5dcf948fc3301cc88d", size = 6215728 },
 ]
 
 [[package]]
@@ -4066,7 +4068,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pgvector", specifier = ">=0.3.5" },
     { name = "pillow", specifier = ">=11.1.0" },
-    { name = "prefect", specifier = "==3.0.0" },
+    { name = "prefect", specifier = ">=3.1.2" },
     { name = "psycopg", specifier = ">=3.2.3" },
     { name = "pydantic", specifier = ">=2.1.0" },
     { name = "pydantic-settings", specifier = ">=2.5.2" },
@@ -4238,6 +4240,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/87/c7/5e1547c44e31da50a460df93af11a535ace568ef89d7a811069ead340c4a/python-slugify-8.0.4.tar.gz", hash = "sha256:59202371d1d05b54a9e7720c5e038f928f45daaffe41dd10822f3907b937c856", size = 10921 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a4/62/02da182e544a51a5c3ccf4b03ab79df279f9c60c5e82d5e8bec7ca26ac11/python_slugify-8.0.4-py2.py3-none-any.whl", hash = "sha256:276540b79961052b66b7d116620b36518847f52d5fd9e3a70164fc8c50faa6b8", size = 10051 },
+]
+
+[[package]]
+name = "python-socks"
+version = "2.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f0/c8/b24466186671519100313b14a95dc7b95f9e428957d25210cc58fba40b8a/python_socks-2.6.1.tar.gz", hash = "sha256:9743929aab6ffe0bab640ecfbbee7130af92408ad86e4aa2984789f742f3ec9e", size = 230318 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/f0/bbeb5ce23e16f20b0b1b1444a9d8924017f5e03063ff9e6aa41d5e9ddc79/python_socks-2.6.1-py3-none-any.whl", hash = "sha256:7fe9324c1834bb9cdce46ddb6721cf42a05a00da5f1fb87f8507ac0c6f305e1d", size = 54953 },
+]
+
+[package.optional-dependencies]
+asyncio = [
+    { name = "async-timeout", marker = "python_full_version < '3.11'" },
 ]
 
 [[package]]
