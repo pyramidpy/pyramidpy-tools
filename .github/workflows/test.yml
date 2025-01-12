@@ -27,7 +27,7 @@ jobs:
       run: uv python install
 
     - name: Install the project
-      run: uv sync --all-extras --test
+      run: uv sync --all-extras
 
     - name: Run tests
       run: uv run pytest tests/ --cov=pyramidpy_tools --cov-report=xml

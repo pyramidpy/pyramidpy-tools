@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from controlflow.tools.tools import Tool
 
-from pyramidpy_tools.tavily.tools import (
+from pyramidpy_tools.tavily_search.tools import (
     get_tavily_api,
     tavily_toolkit,
 )
