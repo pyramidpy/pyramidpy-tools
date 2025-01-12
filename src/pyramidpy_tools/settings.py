@@ -28,4 +28,8 @@ class ToolProviderSettings(BaseSettings):
     twitter_auth_token: str | None = None
     twitter_twid: str | None = None
 
-settings = ToolProviderSettings()
+
+class Settings(BaseSettings):
+    tool_provider: ToolProviderSettings = ToolProviderSettings()
+
+settings = Settings()

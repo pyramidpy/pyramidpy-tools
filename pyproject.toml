@@ -2,7 +2,9 @@
 name = "pyramidpy-tools"
 version = "0.1.0"
 description = "PyramidPy - AI Agent Framework - Toolkits"
-requires-python = ">=3.10.10" # twitter-api-client this could cause issues, fork and fix
+requires-python = ">=3.10.10"
+authors = [{name = "PyramidPy Team"}]
+readme = "README.md"
 
 dependencies = [
     "pydantic-settings>=2.5.2",
@@ -59,7 +61,6 @@ dependencies = [
     "celery-redbeat>=2.2.0",
     "resend>=2.5.1",
     "pytest-env>=1.1.5",
-    "pyramidpy_tools",
     "pillow>=11.1.0",
     "pydantic>=2.1.0",
     "controlflow",
@@ -68,9 +69,9 @@ dependencies = [
 [tool.uv.sources]
 controlflow = {git = "https://github.com/pyramidpy/ControlFlow.git", tag = "v0.12.0"}
 
-
 [project.optional-dependencies]
 test = [
+    "pytest>=7.0.0",
     "pytest-asyncio>=0.18.2,!=0.22.0,<0.23.0",
     "pytest-env>=0.8,<2.0",
     "pytest-rerunfailures>=10,<14",
@@ -80,7 +81,8 @@ test = [
 ]
 
 dev = [
-
+    "black>=23.0.0",
+    "ruff>=0.1.0",
 ]
 
 [project.scripts]
@@ -89,6 +91,9 @@ pyramidpy-tools = "pyramidpy_tools:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build]
+packages = ["src/pyramidpy_tools"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pyramidpy_tools"]
