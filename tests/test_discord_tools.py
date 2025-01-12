@@ -3,8 +3,8 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-from pyramidpy_tools.discord.base import DiscordAPI
-from pyramidpy_tools.discord.schemas import (
+from pyramidpy_tools.discord_bot.base import DiscordAPI
+from pyramidpy_tools.discord_bot.schemas import (
     AddReactionRequest,
     CreateChannelRequest,
     DeleteMessageRequest,
@@ -12,7 +12,7 @@ from pyramidpy_tools.discord.schemas import (
     RemoveReactionRequest,
     SendMessageRequest,
 )
-from pyramidpy_tools.discord.tools import (
+from pyramidpy_tools.discord_bot.tools import (
     discord_add_reaction,
     discord_create_channel,
     discord_delete_message,

@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 
 import httpx
 
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 
 from .schemas import (
     CreateBranchOptions,

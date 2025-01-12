@@ -6,7 +6,7 @@ import re
 
 from langchain_core.documents import Document
 
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 from app.vectorstores.chroma import Chroma
 from app.vectorstores.pg_vector import PGVector
 

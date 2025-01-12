@@ -6,7 +6,7 @@ from apify_client import ApifyClient
 from langchain_core.documents import Document
 from pyramidpy_tools.kb.tools import get_vectorstore
 from langchain_community.utilities import ApifyWrapper
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 
 from .schemas import (
     GoogleSearchResponse,

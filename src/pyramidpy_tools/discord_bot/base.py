@@ -4,7 +4,7 @@ import discord
 from discord import Intents
 from discord.ext import commands
 
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 
 from .schemas import (
     AddReactionRequest,

@@ -8,7 +8,7 @@ from tavily import (
     UsageLimitExceededError,
 )
 
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 
 
 class TavilyAPI:

@@ -6,7 +6,7 @@ from aiogram.types import Update
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 from fastapi import APIRouter, Header, HTTPException, Request
 
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 
 from .base import TelegramAPI
 

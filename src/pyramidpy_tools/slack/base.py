@@ -5,7 +5,7 @@ from fastapi.logger import logger
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import WebClient
 
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 
 
 def convert_md_links_to_slack(text: str) -> str:

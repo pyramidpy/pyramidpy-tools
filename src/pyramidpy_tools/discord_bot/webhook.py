@@ -8,7 +8,7 @@ import nacl.signing
 from discord import AsyncWebhookAdapter, Webhook
 from fastapi import APIRouter, Header, HTTPException, Request
 
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 
 from .base import DiscordAPI
 from .schemas import WebhookPayload
