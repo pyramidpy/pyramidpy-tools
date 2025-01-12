@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.types import FSInputFile, Message
 from aiogram.utils.text_decorations import html_decoration, markdown_decoration
 
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 
 from .schemas import (
     SendDocumentRequest,

@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 from twitter.account import Account
 from twitter.scraper import Scraper
 
-from app.settings import settings
+from pyramidpy_tools.settings import settings
 
 from .schemas import (
     QuoteRequest,

@@ -4,17 +4,17 @@ from controlflow.tools.tools import Tool
 
 from pyramidpy_tools.toolkit import Toolkit
 
-from .apify.tools import apify_toolkit
-from .dex_screener.tools import dex_screener_toolkit
-from .discord_bot.tools import discord_toolkit
-from .file_system.tools import file_system_toolkit
-from .github.tools import github_toolkit
-from .jina.tools import jina_toolkit
-from .kb.tools import knowledge_base_toolkit
-from .slack.tools import slack_toolkit
-from .tavily_search.tools import tavily_toolkit
-from .telegram.tools import telegram_toolkit
-from .twitter_user.tools import twitter_toolkit
+from pyramidpy_tools.apify.tools import apify_toolkit
+from pyramidpy_tools.dex_screener.tools import dex_screener_toolkit
+from pyramidpy_tools.discord_bot.tools import discord_toolkit
+from pyramidpy_tools.file_system.tools import file_system_toolkit
+from pyramidpy_tools.github.tools import github_toolkit
+from pyramidpy_tools.jina.tools import jina_toolkit
+from pyramidpy_tools.kb.tools import knowledge_base_toolkit
+from pyramidpy_tools.slack.tools import slack_toolkit
+from pyramidpy_tools.tavily_search.tools import tavily_toolkit
+from pyramidpy_tools.telegram.tools import telegram_toolkit
+from pyramidpy_tools.twitter_user.tools import twitter_toolkit
 
 
 def get_tools(toolkits: List[Toolkit]) -> List[Tool]:

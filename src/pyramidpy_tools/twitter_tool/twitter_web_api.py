@@ -12,11 +12,13 @@ from twitter.scraper import Scraper
 from twitter.search import Search
 
 from pyramidpy_tools.toolkit import Toolkit
-from app.settings import settings
-
+from pyramidpy_tools.settings import settings
 from .schemas import TwitterWebAuth
 
-default_auth = TwitterWebAuth()
+default_auth = TwitterWebAuth(
+    username=settings.tool_provider.twitter_username,
+    password=settings.tool_provider.twitter_password,
+)
 
 
 def get_account(auth: TwitterWebAuth | None = None):
