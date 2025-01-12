@@ -12,7 +12,7 @@ from pyramidpy_tools.github.tools import (
 
 def test_get_github_api_with_token():
     with patch(
-        "app.settings.settings.tool_provider.github_token.get_secret_value",
+        "pyramidpy_tools.settings.settings.tool_provider.github_token.get_secret_value",
         return_value="default-token",
     ):
         with patch("controlflow.flows.flow.get_flow") as mock_get_flow:
@@ -26,7 +26,7 @@ def test_get_github_api_with_token():
 
 def test_get_github_api_without_token():
     with patch(
-        "app.settings.settings.tool_provider.github_token.get_secret_value",
+        "pyramidpy_tools.settings.settings.tool_provider.github_token.get_secret_value",
         return_value="default-token",
     ):
         with patch("controlflow.flows.flow.get_flow") as mock_get_flow:
