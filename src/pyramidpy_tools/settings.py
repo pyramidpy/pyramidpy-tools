@@ -42,5 +42,6 @@ class ToolProviderSettings(BaseSettings):
 
 class Settings(BaseSettings):
     tool_provider: ToolProviderSettings = ToolProviderSettings()
-
+    storage: StorageSettings = StorageSettings()
+    
 settings = Settings()

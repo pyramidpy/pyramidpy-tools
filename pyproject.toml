@@ -64,7 +64,7 @@ dependencies = [
     "pillow>=11.1.0",
     "pydantic>=2.1.0",
     "controlflow",
-    "fastmcp>=0.4.1",
+    "mcp[cli]>=1.2.0",
     "solana>=0.36.2",
     "solders>=0.23.0",
 ]

@@ -1,12 +1,13 @@
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
+from pydantic import BaseModel
 
 from pyramidpy_tools.toolkit import Toolkit
 
-from .base import TwitterUserAPI
+from .base import TwitterUserAPI, TweepyTwitterApi
 from .schemas import (
     QuoteRequest,
     ReplyRequest,
@@ -15,19 +16,33 @@ from .schemas import (
     TweetActionRequest,
     TweetRequest,
     TwitterUserAuth,
+    TweepyAuth,
+    TwitterAuthConfig,
 )
 
 
 AUTH_PREFIX = "twitter_auth"
 
-def get_twitter_api() -> TwitterUserAPI:
+def get_twitter_api() -> Union[TwitterUserAPI, TweepyTwitterApi]:
     """Get Twitter API instance with auth from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        auth_dict = flow.context.get("auth").get(AUTH_PREFIX)
+        auth_dict = flow.context.get("auth", {}).get(AUTH_PREFIX)
         if auth_dict:
-            auth = TwitterUserAuth(**auth_dict)
-            return TwitterUserAPI(auth=auth)
+            # Try to parse as TweepyAuth first
+            use_tweepy = auth_dict.get("use_tweepy", False)
+            try:
+                auth = TweepyAuth(**auth_dict)
+                return TweepyTwitterApi(auth=auth)
+            except (ValueError, TypeError):
+                # If TweepyAuth fails, try TwitterUserAuth
+                try:
+                    auth = TwitterUserAuth(**auth_dict)
+                    return TwitterUserAPI(auth=auth)
+                except (ValueError, TypeError):
+                    raise ValueError("Invalid Twitter authentication configuration")
+    
+    # Default to TwitterUserAPI with settings-based auth
     return TwitterUserAPI()
 
 
@@ -132,8 +147,8 @@ twitter_toolkit = Toolkit.create_toolkit(
         twitter_unschedule_tweet,
     ],
     auth_key=AUTH_PREFIX,
-    auth_config_schema=TwitterUserAuth,
+    auth_config_schema=TwitterAuthConfig,
     requires_config=True,
     name="Twitter User Toolkit",
-    description="Toolkit for interacting with twitter using user password authentication.",
+    description="Toolkit for interacting with twitter using either OAuth or user authentication.",
 )
