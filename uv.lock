@@ -929,8 +929,8 @@ wheels = [
 
 [[package]]
 name = "controlflow"
-version = "0.12.0"
-source = { git = "https://github.com/pyramidpy/ControlFlow.git?tag=v0.12.0#bcfa58531dffa393c0af9813d723897d9b095298" }
+version = "0.12.1.dev1+gffb2be6"
+source = { git = "https://github.com/pyramidpy/Controlflow.git?tag=v0.12.1#ffb2be6dda0a6cf4c2d1ebb14e855bf2944a4fff" }
 dependencies = [
     { name = "ipython" },
     { name = "jinja2" },
@@ -4022,7 +4022,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/d5/7b/65f55513d3c769fd6
 
 [[package]]
 name = "pyramidpy-tools"
-version = "0.1.0"
+version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "aiogram" },
@@ -4119,7 +4119,7 @@ requires-dist = [
     { name = "celery", specifier = ">=5.2.7" },
     { name = "celery-redbeat", specifier = ">=2.2.0" },
     { name = "chromadb", specifier = ">=0.5.18" },
-    { name = "controlflow", git = "https://github.com/pyramidpy/ControlFlow.git?tag=v0.12.0" },
+    { name = "controlflow", git = "https://github.com/pyramidpy/Controlflow.git?tag=v0.12.1" },
     { name = "curl-cffi", specifier = ">=0.7.3" },
     { name = "discord-py", extras = ["voice"], specifier = ">=2.4.0" },
     { name = "dramatiq", extras = ["redis", "watch"], specifier = ">=1.17.1" },
