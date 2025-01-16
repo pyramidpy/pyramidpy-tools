@@ -1,7 +1,7 @@
 from typing import Any, List, Literal, TypeVar
 
 from controlflow.tools.tools import Tool
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 BaseType = TypeVar("BaseType", bound=BaseModel)
 
@@ -14,7 +14,7 @@ class Toolkit(BaseModel):
     default: bool = Field(
         description="Default toolkits available to all agents", default=True
     )
-    tools: List[Tool] = Field(
+    tools: List[Tool] | None = Field(
         description="List of tools in the toolkit", default=[]
     )
     requires_config: bool = Field(
@@ -67,6 +67,12 @@ class Toolkit(BaseModel):
     setup_complete: bool = Field(
         description="Set to true if toolkit has configuration", default=False
     )
+
+    @field_validator("tools", mode="after")
+    def validate_tools(cls, v):
+        if v is None:
+            return []
+        return v
 
     def to_tool_list(self) -> List[Tool]:
         tools = []

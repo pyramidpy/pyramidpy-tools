@@ -1,6 +1,6 @@
 [project]
 name = "pyramidpy-tools"
-version = "0.1.1"
+version = "0.1.2"
 description = "Toolkits for the PyramidPy Project"
 requires-python = ">=3.10.10"
 authors = [{name = "PyramidPy Team"}]
