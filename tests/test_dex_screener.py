@@ -1,9 +1,9 @@
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import Mock, patch
 
 import pytest
-
+from controlflow.tools.tools import Tool
 from pyramidpy_tools.dex_screener.base import DexScreenerAPI
-from pyramidpy_tools.dex_screener.schemas import DexScreenerResult, PairInfo, TokenInfo
+from pyramidpy_tools.dex_screener.schemas import DexScreenerResult, PairInfo
 from pyramidpy_tools.dex_screener.tools import (
     dex_screener_toolkit,
     get_pair,
@@ -79,7 +79,7 @@ class TestDexScreenerAPI:
 
             assert isinstance(result, DexScreenerResult)
             assert result.success is False
-            assert "HTTP error 404" in result.error
+            assert result.error == "HTTP error 404"
 
     @pytest.mark.asyncio
     async def test_get_pair(self, mock_response, sample_pair_info):
@@ -107,7 +107,7 @@ class TestDexScreenerAPI:
 
             assert isinstance(result, DexScreenerResult)
             assert result.success is False
-            assert "Pair not found" in result.error
+            assert result.error == "Pair not found"
 
 
 @pytest.mark.asyncio

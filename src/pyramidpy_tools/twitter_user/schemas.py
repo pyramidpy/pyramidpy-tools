@@ -8,11 +8,12 @@ class TwitterUserAuth(BaseModel):
     """Authentication settings for Twitter user API"""
 
     cto: str = Field("", description="The consumer token")
-    auth_token: str = Field("", description="The authentication token")
+    auth_token: str = Field("", description="The authentication token. Only required ")
     twid: str = Field("", description="The Twitter ID")
     username: str = Field("", description="The username")
     password: str = Field("", description="The password")
     email: str = Field("", description="The email")
+    use_email_password: bool = Field(True, description="Whether to use the email and password for authentication")
 
 
 class Tweet(BaseModel):

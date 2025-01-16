@@ -910,6 +910,24 @@ wheels = [
 ]
 
 [[package]]
+name = "construct"
+version = "2.10.68"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e0/b7/a4a032e94bcfdff481f2e6fecd472794d9da09f474a2185ed33b2c7cad64/construct-2.10.68.tar.gz", hash = "sha256:7b2a3fd8e5f597a5aa1d614c3bd516fa065db01704c72a1efaaeec6ef23d8b45", size = 57856 }
+
+[[package]]
+name = "construct-typing"
+version = "0.5.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "construct" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/42/5f/89f8e4fc17ea96ef9af66aa4818e00c4fb84c289c4c6879df411d11f15a4/construct-typing-0.5.6.tar.gz", hash = "sha256:0dc501351cd6b308f15ec54e5fe7c0fbc07cc1530a1b77b4303062a0a93c1297", size = 22716 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3e/c5/d68c7b7e5e2875d199b49f86f9fda2b18a58ff0a835f608cb664bbc3a53e/construct_typing-0.5.6-py3-none-any.whl", hash = "sha256:39c948329e880564e33521cba497b21b07967c465b9c9037d6334e2cffa1ced9", size = 24098 },
+]
+
+[[package]]
 name = "controlflow"
 version = "0.12.0"
 source = { git = "https://github.com/pyramidpy/ControlFlow.git?tag=v0.12.0#bcfa58531dffa393c0af9813d723897d9b095298" }
@@ -1260,6 +1278,23 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/93/72/d83b98cd106541e8f5e5bfab8ef2974ab45a62e8a6c5b5e6940f26d2ed4b/fastapi-0.115.6.tar.gz", hash = "sha256:9ec46f7addc14ea472958a96aae5b5de65f39721a46aaf5705c480d9a8b76654", size = 301336 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/52/b3/7e4df40e585df024fac2f80d1a2d579c854ac37109675db2b0cc22c0bb9e/fastapi-0.115.6-py3-none-any.whl", hash = "sha256:e9240b29e36fa8f4bb7290316988e90c381e5092e0cbe84e7818cc3713bcf305", size = 94843 },
+]
+
+[[package]]
+name = "fastmcp"
+version = "0.4.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "mcp" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "typer" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6f/84/17b549133263d7ee77141970769bbc401525526bf1af043ea6842bce1a55/fastmcp-0.4.1.tar.gz", hash = "sha256:713ad3b8e4e04841c9e2f3ca022b053adb89a286ceffad0d69ae7b56f31cbe64", size = 785575 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/79/0b/008a340435fe8f0879e9d608f48af2737ad48440e09bd33b83b3fd03798b/fastmcp-0.4.1-py3-none-any.whl", hash = "sha256:664b42c376fb89ec90a50c9433f5a1f4d24f36696d6c41b024b427ae545f9619", size = 35282 },
 ]
 
 [[package]]
@@ -2034,6 +2069,15 @@ wheels = [
 ]
 
 [[package]]
+name = "jsonalias"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ec/45/ee7e17002cb7f3264f755ff6a1a72c55d1830e07808d643167d2a2277c4f/jsonalias-0.1.1.tar.gz", hash = "sha256:64f04d935397d579fc94509e1fcb6212f2d081235d9d6395bd10baedf760a769", size = 1095 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/41/ed/05aebce69f78c104feff2ffcdd5a6f9d668a208aba3a8bf56e3750809fd8/jsonalias-0.1.1-py3-none-any.whl", hash = "sha256:a56d2888e6397812c606156504e861e8ec00e188005af149f003c787db3d3f18", size = 1312 },
+]
+
+[[package]]
 name = "jsonpatch"
 version = "1.33"
 source = { registry = "https://pypi.org/simple" }
@@ -2622,6 +2666,25 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/99/5b/a36a337438a14116b16480db471ad061c36c3694df7c2084a0da7ba538b7/matplotlib_inline-0.1.7.tar.gz", hash = "sha256:8423b23ec666be3d16e16b60bdd8ac4e86e840ebd1dd11a30b9f117f2fa0ab90", size = 8159 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8f/8e/9ad090d3553c280a8060fbf6e24dc1c0c29704ee7d1c372f0c174aa59285/matplotlib_inline-0.1.7-py3-none-any.whl", hash = "sha256:df192d39a4ff8f21b1895d72e6a13f5fcc5099f00fa84384e0ea28c2cc0653ca", size = 9899 },
+]
+
+[[package]]
+name = "mcp"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "httpx" },
+    { name = "httpx-sse" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "sse-starlette" },
+    { name = "starlette" },
+    { name = "uvicorn" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ab/a5/b08dc846ebedae9f17ced878e6975826e90e448cd4592f532f6a88a925a7/mcp-1.2.0.tar.gz", hash = "sha256:2b06c7ece98d6ea9e6379caa38d74b432385c338fb530cb82e2c70ea7add94f5", size = 102973 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/af/84/fca78f19ac8ce6c53ba416247c71baa53a9e791e98d3c81edbc20a77d6d1/mcp-1.2.0-py3-none-any.whl", hash = "sha256:1d0e77d8c14955a5aea1f5aa1f444c8e531c09355c829b20e42f7a142bc0755f", size = 66468 },
 ]
 
 [[package]]
@@ -3982,6 +4045,7 @@ dependencies = [
     { name = "dramatiq", extra = ["redis", "watch"] },
     { name = "duckdb" },
     { name = "fakeredis" },
+    { name = "fastmcp" },
     { name = "itsdangerous" },
     { name = "langchain-community" },
     { name = "libsql-experimental" },
@@ -4004,6 +4068,8 @@ dependencies = [
     { name = "rich" },
     { name = "scrapyscript" },
     { name = "slack-sdk" },
+    { name = "solana" },
+    { name = "solders" },
     { name = "sqlalchemy" },
     { name = "sqlalchemy-libsql" },
     { name = "sqlalchemy-utils" },
@@ -4026,7 +4092,7 @@ dev = [
     { name = "black" },
     { name = "ruff" },
 ]
-test = [
+tests = [
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-env" },
@@ -4059,6 +4125,7 @@ requires-dist = [
     { name = "dramatiq", extras = ["redis", "watch"], specifier = ">=1.17.1" },
     { name = "duckdb", specifier = ">=1.1.3" },
     { name = "fakeredis", specifier = ">=2.26.2" },
+    { name = "fastmcp", specifier = ">=0.4.1" },
     { name = "itsdangerous", specifier = ">=2.2.0" },
     { name = "langchain-community", specifier = ">=0.3.7" },
     { name = "libsql-experimental", specifier = ">=0.0.41" },
@@ -4074,14 +4141,14 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.5.2" },
     { name = "pyjwt", specifier = ">=2.9.0" },
     { name = "pynacl", specifier = ">=1.5.0" },
-    { name = "pytest", marker = "extra == 'test'", specifier = ">=7.0.0" },
-    { name = "pytest-asyncio", marker = "extra == 'test'", specifier = ">=0.18.2,!=0.22.0,<0.23.0" },
+    { name = "pytest", marker = "extra == 'tests'", specifier = ">=7.0.0" },
+    { name = "pytest-asyncio", marker = "extra == 'tests'", specifier = ">=0.18.2,!=0.22.0,<0.23.0" },
     { name = "pytest-env", specifier = ">=1.1.5" },
-    { name = "pytest-env", marker = "extra == 'test'", specifier = ">=0.8,<2.0" },
-    { name = "pytest-rerunfailures", marker = "extra == 'test'", specifier = ">=10,<14" },
-    { name = "pytest-sugar", marker = "extra == 'test'", specifier = ">=0.9,<2.0" },
-    { name = "pytest-timeout", marker = "extra == 'test'" },
-    { name = "pytest-xdist", marker = "extra == 'test'" },
+    { name = "pytest-env", marker = "extra == 'tests'", specifier = ">=0.8,<2.0" },
+    { name = "pytest-rerunfailures", marker = "extra == 'tests'", specifier = ">=10,<14" },
+    { name = "pytest-sugar", marker = "extra == 'tests'", specifier = ">=0.9,<2.0" },
+    { name = "pytest-timeout", marker = "extra == 'tests'" },
+    { name = "pytest-xdist", marker = "extra == 'tests'" },
     { name = "python-ulid", extras = ["pydantic"], specifier = ">=3.0.0" },
     { name = "redis", specifier = ">=5.2.1" },
     { name = "resend", specifier = ">=2.5.1" },
@@ -4089,6 +4156,8 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
     { name = "scrapyscript", specifier = ">=1.1.5" },
     { name = "slack-sdk", specifier = ">=3.33.3" },
+    { name = "solana", specifier = ">=0.36.2" },
+    { name = "solders", specifier = ">=0.23.0" },
     { name = "sqlalchemy", specifier = ">=2.0.35" },
     { name = "sqlalchemy-libsql", specifier = ">=0.1.0" },
     { name = "sqlalchemy-utils", specifier = ">=0.41.2" },
@@ -4926,6 +4995,42 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/44/7b/af302bebf22c749c56c9c3e8ae13190b5b5db37a33d9068652e8f73b7089/snowballstemmer-2.2.0.tar.gz", hash = "sha256:09b16deb8547d3412ad7b590689584cd0fe25ec8db3be37788be3810cbf19cb1", size = 86699 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ed/dc/c02e01294f7265e63a7315fe086dd1df7dacb9f840a804da846b96d01b96/snowballstemmer-2.2.0-py2.py3-none-any.whl", hash = "sha256:c8e1716e83cc398ae16824e5572ae04e0d9fc2c6b985fb0f900f5f0c96ecba1a", size = 93002 },
+]
+
+[[package]]
+name = "solana"
+version = "0.36.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "construct-typing" },
+    { name = "httpx" },
+    { name = "solders" },
+    { name = "typing-extensions" },
+    { name = "websockets" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a6/f4/9417ad46938c3ea350d93c71cc4d45cbb68b2e2adae3b69d643b7ef11b39/solana-0.36.2.tar.gz", hash = "sha256:d279f144b856bd2920c78f9e4143cb13f2f8fc64244f768868378aa64f78b675", size = 51999 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/23/bf/8878b464a489c46e40f2303887030c62d409b744cd621a501b746ff6a59a/solana-0.36.2-py3-none-any.whl", hash = "sha256:6cb2b458791a768ab277a8f63ccb2d3afe1a97e4169f0218b6ba522afaeffc04", size = 62180 },
+]
+
+[[package]]
+name = "solders"
+version = "0.23.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jsonalias" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fc/ab/9942f251097ea262bea3a2d0b6c45040442c10c5787b71240c2820eaccda/solders-0.23.0.tar.gz", hash = "sha256:f25e8908cca40a766a99dee1aa983fb7816949201b40ec927d0802debd3ec0e4", size = 182285 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/06/d6/c1eb92ea5549cfee8f62a3488de29923008c10e87898bba39d6201f845ed/solders-0.23.0-cp37-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:87c2865f4f634abf56cc3fe9cfea985ddd0a09097d01b7716ed83ff6ef2ad1c6", size = 27236077 },
+    { url = "https://files.pythonhosted.org/packages/4b/6c/f63ef9925a053a013d45c1ec4a67ae485ea221d911d124454bef0368a85d/solders-0.23.0-cp37-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:183fdc05ed0d6004d24bef17c01794a17be4a90f71c31429207bf33ec2e7738d", size = 6926426 },
+    { url = "https://files.pythonhosted.org/packages/32/5d/867a0769783046051fa745df21a3b0ef00ea8b6d9671657f490d20e9dda1/solders-0.23.0-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b1ba84ec23fc7af821dc7e5b48a6d247ae36b86457f930cbc64afa79587e4caf", size = 15470544 },
+    { url = "https://files.pythonhosted.org/packages/c6/69/a33543e8ffa399e34aae46272d41a810d9ea5e1285f66e3547da7c70e359/solders-0.23.0-cp37-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:37d097f4a3e55e8870b9a81e7675834aa9b516e956c8b0c18adcac742573378c", size = 7133781 },
+    { url = "https://files.pythonhosted.org/packages/e1/21/44ec75b4c6ffa56f5a1bb09046156f41b5e05a397bbaf7289027de1bc551/solders-0.23.0-cp37-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:6319929399fdd04d10c5cebbd76993e58d92ade05febec5a488eed7810aae270", size = 7457170 },
+    { url = "https://files.pythonhosted.org/packages/ea/e6/ffee411c48ca3ffeedf1bf9a633eac5d26240092a7e551a206a51495a992/solders-0.23.0-cp37-abi3-musllinux_1_2_i686.whl", hash = "sha256:67514b6dc2ecec9e15198e70eac329eac7b191f0f063c6ab80748b9ff921c3d5", size = 7259632 },
+    { url = "https://files.pythonhosted.org/packages/f9/14/902c802f44e09989feee5f750f5d5621041a681c222153cddb21c2dbe3f8/solders-0.23.0-cp37-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:9cb2360a47f3f4772903dfb3314ec57b637f7fc8ac30690fec28d48e16edacf4", size = 7205242 },
+    { url = "https://files.pythonhosted.org/packages/0d/6b/fd205612876b489f9c70bad04d8d7a98d462fb338a142e02991822f4f359/solders-0.23.0-cp37-abi3-win_amd64.whl", hash = "sha256:2976f6589a5a0a45600aee83b34312ad0d96ea03f8d358493143fc01223997c3", size = 5530329 },
 ]
 
 [[package]]

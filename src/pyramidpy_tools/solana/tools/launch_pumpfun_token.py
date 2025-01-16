@@ -3,11 +3,8 @@ from typing import Any, Dict, Optional
 
 import aiohttp
 from agentipy.agent import SolanaAgentKit
-from agentipy.constants import DEFAULT_OPTIONS
 from agentipy.types import PumpfunTokenOptions, TokenLaunchResult
 from agentipy.utils.send_tx import sign_and_send_transaction
-from solana.rpc.async_api import AsyncClient
-from solana.rpc.commitment import Confirmed
 from solders.keypair import Keypair  # type: ignore
 from solders.transaction import VersionedTransaction  # type: ignore
 

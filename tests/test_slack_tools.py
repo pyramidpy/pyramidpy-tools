@@ -62,7 +62,7 @@ def test_get_slack_api_without_token():
         assert api.team_id is None
 
 
-@pytest.mark.asyncio
+
 async def test_slack_list_channels(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -78,13 +78,13 @@ async def test_slack_list_channels(mock_api):
     )
     result = await list_channels_tool.run_async({})
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert len(result["channels"]) == 2
     assert result["channels"][0]["name"] == "general"
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_slack_post_message(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -100,12 +100,12 @@ async def test_slack_post_message(mock_api):
         {"channel_id": "C123", "text": "Test message"}
     )
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert result["message"]["text"] == "Test message"
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_slack_reply_to_thread(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -121,13 +121,13 @@ async def test_slack_reply_to_thread(mock_api):
         {"channel_id": "C123", "thread_ts": "1234567890.123456", "text": "Test reply"}
     )
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert result["message"]["text"] == "Test reply"
     assert result["message"]["thread_ts"] == "1234567890.123456"
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_slack_add_reaction(mock_api):
     mock_api._make_request.return_value = {"ok": True}
 
@@ -138,11 +138,11 @@ async def test_slack_add_reaction(mock_api):
         {"channel_id": "C123", "timestamp": "1234567890.123456", "reaction": "thumbsup"}
     )
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_slack_get_channel_history(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -158,13 +158,13 @@ async def test_slack_get_channel_history(mock_api):
     )
     result = await get_history_tool.run_async({"channel_id": "C123", "limit": 2})
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert len(result["messages"]) == 2
     assert result["messages"][0]["text"] == "Message 1"
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_slack_get_thread_replies(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -183,13 +183,13 @@ async def test_slack_get_thread_replies(mock_api):
         {"channel_id": "C123", "thread_ts": "1234567890.123456"}
     )
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert len(result["messages"]) == 3
     assert result["messages"][1]["text"] == "Reply 1"
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_slack_get_users(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -203,13 +203,12 @@ async def test_slack_get_users(mock_api):
     get_users_tool = next(t for t in slack_toolkit.tools if t.name == "slack_get_users")
     result = await get_users_tool.run_async({})
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert len(result["members"]) == 2
     assert result["members"][0]["name"] == "user1"
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
 async def test_slack_get_user_profile(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -225,7 +224,7 @@ async def test_slack_get_user_profile(mock_api):
     )
     result = await get_profile_tool.run_async({"user_id": "U123"})
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert result["profile"]["real_name"] == "User One"
     assert result["profile"]["email"] == "user1@example.com"
     mock_api._make_request.assert_called_once()

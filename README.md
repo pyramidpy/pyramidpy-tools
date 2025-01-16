@@ -5,15 +5,20 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive collection of curated toolkits for the PyramidPy project, built on top of the ControlFlow framework. This repository provides ready-to-use tools and integrations to enhance your AI agent capabilities.
+A comprehensive collection of curated toolkits for the PyramidPy project.
+This repository provides ready-to-use tools and integrations to enhance your AI agent capabilities.
 
 ## 🌟 Features
 
-- 🔍 **Tavily Search**: Integration with Tavily's AI-powered search API
-- 🤖 **Apify Tools**: Web scraping and automation capabilities
-- 💬 **Telegram Tools**: Telegram bot integration utilities
-- 📊 **DEX Screener**: Tools for cryptocurrency DEX analysis
-- 🎯 **Jina Tools**: Neural search and indexing capabilities
+- Over 50+ tools across 5 categories
+- MCP server support
+- Tools include:
+  - 🔍 **Tavily Search**: Integration with Tavily's AI-powered search API
+  - 🤖 **Apify Tools**: Web scraping and automation capabilities
+  - 💬 **Telegram Tools**: Telegram bot integration utilities
+  - 📊 **DEX Screener**: Tools for cryptocurrency DEX analysis
+  - 🎯 **Jina Tools**: Neural search and indexing capabilities
+  - 📈 **Twitter Tools**: Twitter bot integration utilities
 
 And many more
 
@@ -57,6 +62,28 @@ uv sync --all-extras
 pytest tests/
 ```
 
+## MCP Server
+
+You can find example of how to use the MCP server in the [examples](examples) folder.
+
+create a file called `twitter_mcp.py` and add the following code:
+
+```python
+from pyramidpy_tools.toolkit_to_mcp import create_mcp_from_toolkit
+from pyramidpy_tools.twitter_user.tools import twitter_toolkit
+
+mcp = create_mcp_from_toolkit(twitter_toolkit, "Twitter MCP Server")
+```
+
+Start the MCP server:
+
+```bash
+fastmcp dev twitter_mcp.py
+
+```
+
+
+
 ## 🤝 Contributing
 
 We love your input! We want to make contributing to PyramidPy Tools as easy and transparent as possible, whether it's:
@@ -65,7 +92,8 @@ We love your input! We want to make contributing to PyramidPy Tools as easy and 
 - Discussing the current state of the code
 - Submitting a fix
 - Proposing new features
-- Becoming a maintainer
+
+We are working on a tooling (powered by agents of course) to help you contribute to this project.
 
 Check out our [Contributing Guide](CONTRIBUTING.md) for ways to get started.
 
@@ -75,5 +103,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🔗 Related Projects
 
-- [ControlFlow](https://github.com/pyramidpy/ControlFlow) - The core framework for building AI agents
 - [PyramidPy](https://github.com/pyramidpy/PyramidPy) - Main PyramidPy project

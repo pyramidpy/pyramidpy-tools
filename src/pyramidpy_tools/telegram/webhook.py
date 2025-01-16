@@ -1,9 +1,7 @@
 from typing import Any, Dict
 
-from aiogram import Bot, Dispatcher
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Update
-from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 from fastapi import APIRouter, Header, HTTPException, Request
 
 from pyramidpy_tools.settings import settings

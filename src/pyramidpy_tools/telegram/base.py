@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
 
 from aiogram import Bot, Dispatcher
-from aiogram.types import FSInputFile, Message
+from aiogram.types import FSInputFile
 from aiogram.utils.text_decorations import html_decoration, markdown_decoration
 
 from pyramidpy_tools.settings import settings

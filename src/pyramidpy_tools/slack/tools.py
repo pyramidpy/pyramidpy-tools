@@ -12,8 +12,8 @@ def get_slack_api() -> SlackAPI:
     """Get Slack API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        bot_token = flow.context.get("slack_bot_token")
-        team_id = flow.context.get("slack_team_id")
+        bot_token = flow.context.get("auth", {}).get("slack_bot_token")
+        team_id = flow.context.get("auth", {}).get("slack_team_id")
         if bot_token and team_id:
             return SlackAPI(bot_token=bot_token, team_id=team_id)
     return SlackAPI()
@@ -111,7 +111,9 @@ slack_toolkit = Toolkit.create_toolkit(
         slack_get_users,
         slack_get_user_profile,
     ],
-    auth_key="slack_bot_token",
+    auth_key="slack_auth",
+    requires_config=True,
     name="Slack Toolkit",
     description="Tools for interacting with Slack API",
 )
+

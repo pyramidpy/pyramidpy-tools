@@ -7,17 +7,21 @@ BaseType = TypeVar("BaseType", bound=BaseModel)
 
 
 class Toolkit(BaseModel):
-    id: str = Field(description="App ID of the toolkit", default="")
+    # TODO clean up and remove duplicates and unused.
+    id: str = Field(description="DB ID of the toolkit", default="")
     name: str = Field(description="Name of the toolkit", default="")
     description: str = Field(description="Description of the toolkit", default="")
     default: bool = Field(
         description="Default toolkits available to all agents", default=True
     )
-    tools: List[Tool] | None = Field(
-        description="List of tools in the toolkit", default=None
+    tools: List[Tool] = Field(
+        description="List of tools in the toolkit", default=[]
     )
     requires_config: bool = Field(
         description="Whether the toolkit requires a config", default=False
+    )
+    auth_config: dict | None = Field(
+        description="Config for the toolkit", default=None
     )
     active_tools: List[str] | None | Literal["all"] = Field(
         description="Active tools for the toolkit", default="all"
@@ -25,17 +29,43 @@ class Toolkit(BaseModel):
     auth_key: str | None = Field(
         description="Authentication key for the toolkit from context", default=None
     )
-    auth_config: Any | dict | None = Field(
+    auth_config_schema: Any | dict | None = Field(
         description="Authentication config for the toolkit", default=None, exclude=True
     )
-    auth_config_schema: Any | dict | None = Field(
-        description="Authentication config for the toolkit. Should be a Pydantic model.", default=None, exclude=True
-    )
-    category: Literal["channel", "tool", "other"] = Field(
-        description="Category of the toolkit", default="other"
+    is_channel: bool = Field(
+        description="Whether the toolkit is a channel", default=False
     )
     is_app_default: bool = Field(
         description="Whether the toolkit is an app default", default=False
+    )
+    custom_name: str | None = Field(
+        description="User defined name for the toolkit", default=None
+    )
+    custom_description: str | None = Field(
+        description="User defined description for the toolkit", default=None
+    )
+    custom_instructions: str | None = Field(
+        description="User defined instructions for the toolkit", default=None
+    )
+
+    config: dict | None = Field(
+        description="Configuration for the toolkit.", default=None
+    )
+    config_schema: dict | None | str = Field(
+        description="Schema for the toolkit configuration", default=None
+    )
+    tools_schema: dict | list | None = Field(
+        description="Schema for the tools in the toolkit", default=None
+    )
+
+    db_id: str | None = Field(
+        description="The id of the toolkit in the database", default=None
+    )
+    access_list: list[str] | None = Field(
+        description="List of users & Agents who have access to the toolkit", default=None
+    )
+    setup_complete: bool = Field(
+        description="Set to true if toolkit has configuration", default=False
     )
 
     def to_tool_list(self) -> List[Tool]:
@@ -92,12 +122,15 @@ class Toolkit(BaseModel):
 
     # run a tool in a toolkit
     def run_tool(self, tool_id: str, input: dict):
+        # TODO should be run in a flow
+        
         tool = next((t for t in self.tools if t.name == tool_id), None)
         if not tool:
             raise ValueError(f"Tool {tool_id} not found in toolkit {self.name}")
         return tool.run(input)
 
     def run_tool_async(self, tool_id: str, input: dict):
+        # TODO should be run in a flow
         tool = next((t for t in self.tools if t.name == tool_id), None)
         if not tool:
             raise ValueError(f"Tool {tool_id} not found in toolkit {self.name}")

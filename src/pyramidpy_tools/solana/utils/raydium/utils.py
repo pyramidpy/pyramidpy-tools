@@ -215,7 +215,7 @@ def confirm_txn(
             if txn_json["err"]:
                 print("Transaction failed.")
                 return False
-        except Exception as e:
+        except Exception:
             print("Awaiting confirmation... try count:", retries)
             retries += 1
             time.sleep(retry_interval)

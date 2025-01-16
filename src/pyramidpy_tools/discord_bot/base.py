@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import discord
 from discord import Intents
@@ -10,8 +10,6 @@ from .schemas import (
     AddReactionRequest,
     CreateChannelRequest,
     DeleteMessageRequest,
-    DiscordChannel,
-    DiscordMessage,
     EditMessageRequest,
     RemoveReactionRequest,
     SendMessageRequest,

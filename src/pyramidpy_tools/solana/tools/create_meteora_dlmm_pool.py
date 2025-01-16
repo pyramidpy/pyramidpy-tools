@@ -1,4 +1,3 @@
-from math import ceil
 from typing import Optional
 
 from agentipy.agent import SolanaAgentKit
@@ -59,7 +58,7 @@ class MeteoraManager:
         token_a_mint_info = await token_a.get_mint_info()
         token_b_mint_info = await token_b.get_mint_info()
 
-        init_price = DLMM.get_price_per_lamport(
+        DLMM.get_price_per_lamport(
             token_a_mint_info.decimals, token_b_mint_info.decimals, initial_price
         )
 

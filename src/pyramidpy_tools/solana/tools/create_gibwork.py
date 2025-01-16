@@ -3,10 +3,8 @@ import base64
 import requests
 from agentipy.agent import SolanaAgentKit
 from agentipy.types import GibworkCreateTaskResponse
-from solana.rpc.async_api import AsyncClient
 from solana.rpc.types import TxOpts
 from solana.transaction import Transaction
-from solders.keypair import Keypair  # type: ignore
 from solders.pubkey import Pubkey as PublicKey  # type: ignore
 
 

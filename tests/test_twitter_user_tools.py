@@ -49,7 +49,7 @@ def test_get_twitter_api_without_auth():
         assert api.auth is None
 
 
-@pytest.mark.asyncio
+
 async def test_twitter_get_latest_timeline():
     with patch(
         "pyramidpy_tools.tools.twitter_user.base.TwitterUserAPI.get_latest_timeline"
@@ -67,7 +67,7 @@ async def test_twitter_get_latest_timeline():
         mock_timeline.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_twitter_tweet(mock_tweet_response):
     with patch("pyramidpy_tools.tools.twitter_user.base.TwitterUserAPI.send_tweet") as mock_tweet:
         mock_tweet.return_value = mock_tweet_response
@@ -79,7 +79,7 @@ async def test_twitter_tweet(mock_tweet_response):
         mock_tweet.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_twitter_reply(mock_tweet_response):
     with patch(
         "pyramidpy_tools.tools.twitter_user.base.TwitterUserAPI.reply_to_tweet"
@@ -93,7 +93,7 @@ async def test_twitter_reply(mock_tweet_response):
         mock_reply.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_twitter_quote(mock_tweet_response):
     with patch("pyramidpy_tools.tools.twitter_user.base.TwitterUserAPI.quote_tweet") as mock_quote:
         mock_quote.return_value = mock_tweet_response
@@ -105,7 +105,7 @@ async def test_twitter_quote(mock_tweet_response):
         mock_quote.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_twitter_retweet(mock_tweet_response):
     with patch("pyramidpy_tools.tools.twitter_user.base.TwitterUserAPI.retweet") as mock_retweet:
         mock_retweet.return_value = mock_tweet_response
@@ -116,7 +116,7 @@ async def test_twitter_retweet(mock_tweet_response):
         mock_retweet.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_twitter_unretweet(mock_tweet_response):
     with patch(
         "pyramidpy_tools.tools.twitter_user.base.TwitterUserAPI.unretweet"
@@ -129,7 +129,7 @@ async def test_twitter_unretweet(mock_tweet_response):
         mock_unretweet.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_twitter_schedule_tweet(mock_tweet_response):
     with patch(
         "pyramidpy_tools.tools.twitter_user.base.TwitterUserAPI.schedule_tweet"
@@ -146,7 +146,7 @@ async def test_twitter_schedule_tweet(mock_tweet_response):
         mock_schedule.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_twitter_unschedule_tweet(mock_tweet_response):
     with patch(
         "pyramidpy_tools.tools.twitter_user.base.TwitterUserAPI.unschedule_tweet"
@@ -159,7 +159,7 @@ async def test_twitter_unschedule_tweet(mock_tweet_response):
         mock_unschedule.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_twitter_api_error():
     with patch("pyramidpy_tools.tools.twitter_user.base.TwitterUserAPI.send_tweet") as mock_tweet:
         mock_tweet.side_effect = Exception("API Error")

@@ -45,7 +45,7 @@ def test_get_telegram_api_without_token():
         assert api.token is None
 
 
-@pytest.mark.asyncio
+
 async def test_telegram_send_message(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -63,13 +63,13 @@ async def test_telegram_send_message(mock_api):
         {"chat_id": "12345", "text": "Test message", "parse_mode": "HTML"}
     )
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert result["result"]["text"] == "Test message"
     assert result["result"]["message_id"] == 123
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_telegram_send_photo(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -87,13 +87,13 @@ async def test_telegram_send_photo(mock_api):
         {"chat_id": "12345", "photo": "photo_url", "caption": "Test photo"}
     )
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert "photo" in result["result"]
     assert result["result"]["message_id"] == 124
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_telegram_send_document(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -111,13 +111,13 @@ async def test_telegram_send_document(mock_api):
         {"chat_id": "12345", "document": "document_url", "caption": "Test document"}
     )
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert "document" in result["result"]
     assert result["result"]["message_id"] == 125
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_telegram_get_webhook_info(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -133,12 +133,12 @@ async def test_telegram_get_webhook_info(mock_api):
     )
     result = await get_webhook_tool.run_async({})
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert result["result"]["url"] == "https://example.com/webhook"
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_telegram_set_webhook(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -157,11 +157,11 @@ async def test_telegram_set_webhook(mock_api):
         }
     )
 
-    assert result == True
+    assert result is True
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_telegram_delete_webhook(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -174,11 +174,11 @@ async def test_telegram_delete_webhook(mock_api):
     )
     result = await delete_webhook_tool.run_async({"drop_pending_updates": True})
 
-    assert result == True
+    assert result is True
     mock_api._make_request.assert_called_once()
 
 
-@pytest.mark.asyncio
+
 async def test_telegram_send_message_with_reply(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -197,7 +197,7 @@ async def test_telegram_send_message_with_reply(mock_api):
         {"chat_id": "12345", "text": "Reply message", "reply_to_message_id": 125}
     )
 
-    assert result["ok"] == True
+    assert result["ok"] is True
     assert result["result"]["text"] == "Reply message"
     assert result["result"]["reply_to_message"]["message_id"] == 125
     mock_api._make_request.assert_called_once()

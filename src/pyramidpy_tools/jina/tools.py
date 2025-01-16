@@ -13,7 +13,7 @@ def get_jina_api() -> JinaAPI:
     """Get Jina API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        api_key = flow.context.get("jina_api_key")
+        api_key = flow.context.get("auth", {}).get("jina_api_key")
         if api_key:
             return JinaAPI(api_key=api_key)
     return JinaAPI(api_key=settings.tool_provider.jina_api_key)

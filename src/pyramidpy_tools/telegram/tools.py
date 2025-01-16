@@ -4,7 +4,6 @@ from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
 
 from pyramidpy_tools.toolkit import Toolkit
-from pyramidpy_tools.settings import settings
 
 from .base import TelegramAPI
 from .schemas import SendDocumentRequest, SendMessageRequest, SendPhotoRequest
@@ -14,7 +13,7 @@ def get_telegram_api() -> TelegramAPI:
     """Get Telegram API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        token = flow.context.get("telegram_bot_token")
+        token = flow.context.get("auth", {}).get("telegram_bot_token")
         if token:
             return TelegramAPI(token=token)
     return TelegramAPI()

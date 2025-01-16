@@ -1,11 +1,8 @@
-import json
 from datetime import datetime
 from typing import Any, Dict
 
-import aiohttp
 import nacl.exceptions
 import nacl.signing
-from discord import AsyncWebhookAdapter, Webhook
 from fastapi import APIRouter, Header, HTTPException, Request
 
 from pyramidpy_tools.settings import settings

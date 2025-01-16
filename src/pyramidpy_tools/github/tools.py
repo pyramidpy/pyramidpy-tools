@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
-
+from pyramidpy_tools.settings import settings
 from pyramidpy_tools.toolkit import Toolkit
 
 from .base import GitHubAPI
@@ -20,10 +20,10 @@ def get_github_api() -> GitHubAPI:
     """Get GitHub API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        token = flow.context.get("github_token")
+        token = flow.context.get("auth", {}).get("github_token")
         if token:
             return GitHubAPI(token=token)
-    return GitHubAPI()
+    return GitHubAPI(token=settings.tool_provider.github_token.get_secret_value())
 
 
 @tool(
@@ -211,6 +211,7 @@ async def github_list_issues(
     per_page: Optional[int] = None,
 ):
     github = get_github_api()
+    print(owner, repo, state, labels, sort, direction, since, page, per_page)
     return await github.list_issues(
         owner, repo, state, labels, sort, direction, since, page, per_page
     )

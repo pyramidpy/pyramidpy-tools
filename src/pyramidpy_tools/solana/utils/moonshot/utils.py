@@ -42,7 +42,7 @@ def get_token_balance(agent: SolanaAgentKit, pub_key: str, token: str):
         response = requests.post(agent.rpc_url, json=payload, headers=headers)
         ui_amount = find_data(response.json(), "uiAmount")
         return float(ui_amount)
-    except Exception as e:
+    except Exception:
         return None
 
 
@@ -67,7 +67,7 @@ def confirm_txn(agent: SolanaAgentKit, txn_sig, max_retries=20, retry_interval=3
             if txn_json["err"]:
                 print("Transaction failed.")
                 return False
-        except Exception as e:
+        except Exception:
             print("Awaiting confirmation... try count:", retries + 1)
             retries += 1
             time.sleep(retry_interval)

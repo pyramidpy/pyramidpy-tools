@@ -1,6 +1,5 @@
 from typing import Optional
 
-import base58
 from agentipy.constants import DEFAULT_OPTIONS
 from agentipy.types import PumpfunTokenOptions
 from agentipy.utils.meteora_dlmm.types import ActivationType

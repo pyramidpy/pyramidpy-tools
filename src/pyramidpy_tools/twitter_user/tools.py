@@ -5,7 +5,6 @@ from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
 
 from pyramidpy_tools.toolkit import Toolkit
-from pyramidpy_tools.settings import settings
 
 from .base import TwitterUserAPI
 from .schemas import (
@@ -19,11 +18,13 @@ from .schemas import (
 )
 
 
+AUTH_PREFIX = "twitter_auth"
+
 def get_twitter_api() -> TwitterUserAPI:
     """Get Twitter API instance with auth from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        auth_dict = flow.context.get("twitter_auth")
+        auth_dict = flow.context.get("auth").get(AUTH_PREFIX)
         if auth_dict:
             auth = TwitterUserAuth(**auth_dict)
             return TwitterUserAPI(auth=auth)
@@ -130,7 +131,7 @@ twitter_toolkit = Toolkit.create_toolkit(
         twitter_schedule_tweet,
         twitter_unschedule_tweet,
     ],
-    auth_key="twitter_auth",
+    auth_key=AUTH_PREFIX,
     auth_config_schema=TwitterUserAuth,
     requires_config=True,
     name="Twitter User Toolkit",

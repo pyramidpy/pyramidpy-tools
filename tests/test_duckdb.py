@@ -1,6 +1,5 @@
-from unittest.mock import AsyncMock, Mock, call, patch
+from unittest.mock import AsyncMock, Mock, patch
 
-import duckdb
 import pandas as pd
 import pytest
 from controlflow.tools.tools import Tool
@@ -8,10 +7,6 @@ from controlflow.tools.tools import Tool
 from pyramidpy_tools.duckdb_tool.base import DuckDBAPI
 from pyramidpy_tools.duckdb_tool.schemas import QueryResult, S3Config, TableSchema
 from pyramidpy_tools.duckdb_tool.tools import (
-    duckdb_create_table_from_s3,
-    duckdb_execute_query,
-    duckdb_export_to_s3,
-    duckdb_list_tables,
     duckdb_toolkit,
 )
 

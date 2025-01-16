@@ -20,7 +20,7 @@ def get_discord_api() -> DiscordAPI:
     """Get Discord API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        token = flow.context.get("discord_bot_token")
+        token = flow.context.get("auth", {}).get("discord_bot_token")
         if token:
             return DiscordAPI(token=token)
     return DiscordAPI()

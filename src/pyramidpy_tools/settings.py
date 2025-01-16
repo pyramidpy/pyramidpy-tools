@@ -1,6 +1,14 @@
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+class StorageSettings(BaseSettings):
+    """
+    Settings for storage.
+    """
+    postgres_url: str | None = None
+    chroma_url: str | None = None
+    pgvector_url: str | None = None
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 class ToolProviderSettings(BaseSettings):
     """
@@ -27,6 +35,9 @@ class ToolProviderSettings(BaseSettings):
     twitter_cto: str | None = None
     twitter_auth_token: str | None = None
     twitter_twid: str | None = None
+
+    # storage
+    storage: StorageSettings = StorageSettings()
 
 
 class Settings(BaseSettings):
