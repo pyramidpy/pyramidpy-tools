@@ -70,7 +70,7 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-controlflow = {git = "https://github.com/pyramidpy/ControlFlow.git", tag = "v0.12.0"}
+controlflow = { git = "https://github.com/pyramidpy/Controlflow.git", branch = "main" }
 
 [project.optional-dependencies]
 tests = [

@@ -70,11 +70,13 @@ class Toolkit(BaseModel):
 
     @field_validator("tools", mode="after")
     def validate_tools(cls, v):
+        """Validate the tools in the toolkit."""
         if v is None:
             return []
         return v
 
     def to_tool_list(self) -> List[Tool]:
+        """Get a list of tools from the toolkit."""
         tools = []
         if self.active_tools not in [None, "all"]:
             all_tools = self.tools
@@ -84,8 +86,13 @@ class Toolkit(BaseModel):
         else:
             tools = self.tools
         return tools
+    
+    def get_tool(self, tool_id: str) -> Tool:
+        """Get a tool from the toolkit by its name."""
+        return next((t for t in self.tools if t.name == tool_id), None)
 
     def add_tool(self, tool_id: str):
+        """Add a tool to the toolkit."""
         tool_ids = [t.name for t in self.tools]
         if tool_id in tool_ids:
             self.active_tools.append(tool_id)
@@ -93,6 +100,7 @@ class Toolkit(BaseModel):
             raise ValueError(f"Tool {tool_id} not found in toolkit {self.name}")
 
     def remove_tool(self, tool_id: str):
+        """Remove a tool from the toolkit."""
         tool_ids = [t.name for t in self.tools]
         if tool_id in tool_ids:
             self.active_tools.remove(tool_id)
@@ -113,6 +121,7 @@ class Toolkit(BaseModel):
         is_channel: bool = False,
         **kwargs,
     ):
+        """Create a toolkit."""
         return cls(
             id=id,
             name=name,
@@ -128,6 +137,7 @@ class Toolkit(BaseModel):
 
     # run a tool in a toolkit
     def run_tool(self, tool_id: str, input: dict):
+        """Run a tool in a toolkit."""
         # TODO should be run in a flow
         
         tool = next((t for t in self.tools if t.name == tool_id), None)
@@ -136,6 +146,7 @@ class Toolkit(BaseModel):
         return tool.run(input)
 
     def run_tool_async(self, tool_id: str, input: dict):
+        """Run a tool in a toolkit asynchronously."""
         # TODO should be run in a flow
         tool = next((t for t in self.tools if t.name == tool_id), None)
         if not tool:
