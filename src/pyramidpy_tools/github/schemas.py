@@ -296,3 +296,7 @@ class ForkRepositoryParams(BaseModel):
         None,
         description="Optional: organization to fork to (defaults to your personal account)",
     )
+
+
+class GitHubAuth(BaseModel):
+    token: str = Field(..., description="GitHub PAT token")

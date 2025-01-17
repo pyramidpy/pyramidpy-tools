@@ -1,4 +1,3 @@
-
 from controlflow.tools import Tool
 
 tool_registry = {}

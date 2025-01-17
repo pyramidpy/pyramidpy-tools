@@ -8,6 +8,7 @@ from .schema import Token, TokenInsights
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 async def fetch_token_data(contract_address: str) -> Optional[Token]:
     """
     Replace with your actual data source implementation
@@ -27,16 +28,16 @@ async def fetch_token_data(contract_address: str) -> Optional[Token]:
             summary="Bullish momentum with increasing volume",
             catalysts="• New DEX listing expected next week",
             twitter="• High social engagement in last 24h",
-            github="• 47 commits this week"
-        )
+            github="• 47 commits this week",
+        ),
     )
+
 
 async def store_token_data(token: Token):
     db = SessionLocal()
     try:
         token_data = TokenData(
-            contract_address=token.contract_address,
-            data=token.model_dump()
+            contract_address=token.contract_address, data=token.model_dump()
         )
         db.merge(token_data)
         db.commit()
@@ -46,6 +47,7 @@ async def store_token_data(token: Token):
         db.rollback()
     finally:
         db.close()
+
 
 async def run_update_job():
     """Main job to update token data"""
@@ -61,8 +63,9 @@ async def run_update_job():
             token_data = await fetch_token_data(address)
             if token_data:
                 await store_token_data(token_data)
-        
+
         await asyncio.sleep(300)  # 5 minutes
+
 
 if __name__ == "__main__":
     asyncio.run(run_update_job())

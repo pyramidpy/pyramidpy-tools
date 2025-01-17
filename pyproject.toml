@@ -67,6 +67,8 @@ dependencies = [
     "mcp[cli]>=1.2.0",
     "solana>=0.36.2",
     "solders>=0.23.0",
+    "pygithub>=2.5.0",
+    "ragas>=0.2.11",
 ]
 
 [tool.uv.sources]
@@ -88,17 +90,30 @@ dev = [
     "ruff>=0.1.0",
 ]
 
-[project.scripts]
-pyramidpy-tools = "pyramidpy_tools:main"
+# [project.scripts]
+# pyramidpy-tools = "pyramidpy_tools:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
-addopts = [
-    "--import-mode=importlib",
-]
+# addopts = [
+#     "--import-mode=importlib",
+# ]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
-pythonpath = [".", "src"]
+pythonpath = ["src"]
+
+
+# [tool.pyright]
+# include = ["src", "tests"]
+# exclude = ["**/node_modules", "**/__pycache__", ".venv", ".git", "dist"]
+# pythonVersion = "3.10"
+# pythonPlatform = "Darwin"
+# typeCheckingMode = "basic"
+# reportMissingImports = true
+# reportMissingTypeStubs = false
+# useLibraryCodeForTypes = true
+# venvPath = "."
+# venv = ".venv"

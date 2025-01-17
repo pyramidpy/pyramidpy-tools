@@ -13,7 +13,7 @@ def convert_md_links_to_slack(text: str) -> str:
     md_link_pattern = r"\[(?P<text>[^\]]+)]\((?P<url>[^\)]+)\)"
 
     def to_slack_link(match):
-        return f'<{match.group("url")}|{match.group("text")}>'
+        return f"<{match.group('url')}|{match.group('text')}>"
 
     return re.sub(
         r"\*\*(.*?)\*\*", r"*\1*", re.sub(md_link_pattern, to_slack_link, text)
@@ -29,9 +29,10 @@ def format_as_chat_message(message: dict) -> dict:
 
 class SlackAPI:
     def __init__(self, token: str | None = None):
-        self.client = WebClient(
-            token=token or settings.tool_provider.slack_api_token.get_secret_value()
-        )
+        token = token or settings.tool_provider.slack_api_token.get_secret_value()
+        if not token:
+            raise ValueError("Slack API token not configured")
+        self.client = WebClient(token=token)
 
     async def list_channels(
         self, limit: int = 100, cursor: Optional[str] = None

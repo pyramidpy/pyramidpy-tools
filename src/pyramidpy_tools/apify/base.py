@@ -30,7 +30,6 @@ class ApifyAPI:
 
         self.client = ApifyClient(self.api_key)
 
-   
     def web_loader(
         self,
         start_urls: list[str],
@@ -38,20 +37,19 @@ class ApifyAPI:
         max_crawl_pages: int = 2,
     ) -> list[Document]:
         """Load the web for information relevant to the query."""
-        apify = ApifyWrapper(
-            apify_api_token=self.api_key
-        )
+        apify = ApifyWrapper(apify_api_token=self.api_key)
         urls = [{"url": url} for url in start_urls]
         loader = apify.call_actor(
             actor_id="apify/website-content-crawler",
             run_input={"startUrls": urls, "maxCrawlPages": max_crawl_pages},
             dataset_mapping_function=lambda item: Document(
-                page_content=item["text"] or "", metadata={"source": item["url"]}, id=item.get("id", str(uuid.uuid4()))
+                page_content=item["text"] or "",
+                metadata={"source": item["url"]},
+                id=item.get("id", str(uuid.uuid4())),
             ),
         )
         docs = loader.load()
         return docs
-     
 
     async def web_scraper(
         self,

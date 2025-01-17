@@ -15,4 +15,4 @@ __all__ = [
     "delete_documents",
     "list_collections",
     "vector_store_toolkit",
-] 
+]

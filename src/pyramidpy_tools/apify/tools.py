@@ -10,11 +10,12 @@ from .base import ApifyAPI
 
 AUTH_PREFIX = "apify_api_key"
 
+
 def get_apify_api() -> ApifyAPI:
     """Get Apify API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        api_key = flow.context.get('auth').get(AUTH_PREFIX)
+        api_key = flow.context.get("auth").get(AUTH_PREFIX)
         if api_key:
             return ApifyAPI(api_key=api_key)
     return ApifyAPI()
@@ -61,6 +62,7 @@ async def apify_google_search(
         max_age_days=max_age_days,
     )
 
+
 @tool(
     name="apify_web_loader",
     description="Load LLM friendly web pages using Apify's web loader",
@@ -77,6 +79,7 @@ async def apify_web_loader(
         max_crawl_pages=max_crawl_pages,
         collection=collection,
     )
+
 
 apify_toolkit = Toolkit.create_toolkit(
     id="apify_toolkit",

@@ -20,9 +20,7 @@ class Toolkit(BaseModel):
     requires_config: bool = Field(
         description="Whether the toolkit requires a config", default=False
     )
-    auth_config: dict | None = Field(
-        description="Config for the toolkit", default=None
-    )
+    auth_config: dict | None = Field(description="Config for the toolkit", default=None)
     active_tools: List[str] | None | Literal["all"] = Field(
         description="Active tools for the toolkit", default="all"
     )
@@ -62,7 +60,8 @@ class Toolkit(BaseModel):
         description="The id of the toolkit in the database", default=None
     )
     access_list: list[str] | None = Field(
-        description="List of users & Agents who have access to the toolkit", default=None
+        description="List of users & Agents who have access to the toolkit",
+        default=None,
     )
     setup_complete: bool = Field(
         description="Set to true if toolkit has configuration", default=False
@@ -86,7 +85,7 @@ class Toolkit(BaseModel):
         else:
             tools = self.tools
         return tools
-    
+
     def get_tool(self, tool_id: str) -> Tool:
         """Get a tool from the toolkit by its name."""
         return next((t for t in self.tools if t.name == tool_id), None)
@@ -139,7 +138,7 @@ class Toolkit(BaseModel):
     def run_tool(self, tool_id: str, input: dict):
         """Run a tool in a toolkit."""
         # TODO should be run in a flow
-        
+
         tool = next((t for t in self.tools if t.name == tool_id), None)
         if not tool:
             raise ValueError(f"Tool {tool_id} not found in toolkit {self.name}")

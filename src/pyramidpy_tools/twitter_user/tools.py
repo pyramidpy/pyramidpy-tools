@@ -1,9 +1,8 @@
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 
 from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
-from pydantic import BaseModel
 
 from pyramidpy_tools.toolkit import Toolkit
 
@@ -17,32 +16,35 @@ from .schemas import (
     TweetRequest,
     TwitterUserAuth,
     TweepyAuth,
-    TwitterAuthConfig,
 )
 
 
 AUTH_PREFIX = "twitter_auth"
 
+
 def get_twitter_api() -> Union[TwitterUserAPI, TweepyTwitterApi]:
     """Get Twitter API instance with auth from context if available"""
     flow = get_flow()
+    print("Flow:", flow)
     if flow and flow.context:
+        print("Flow context:", flow.context)
         auth_dict = flow.context.get("auth", {}).get(AUTH_PREFIX)
+        print("Auth dict:", auth_dict)
         if auth_dict:
-            # Try to parse as TweepyAuth first
-            use_tweepy = auth_dict.get("use_tweepy", False)
             try:
-                auth = TweepyAuth(**auth_dict)
-                return TweepyTwitterApi(auth=auth)
-            except (ValueError, TypeError):
-                # If TweepyAuth fails, try TwitterUserAuth
-                try:
+                # Check for Tweepy-specific fields
+                if "bearer_token" in auth_dict or "consumer_key" in auth_dict:
+                    print("Validating as TweepyAuth")
+                    auth = TweepyAuth(**auth_dict)
+                    return TweepyTwitterApi(auth=auth)
+                else:
+                    print("Validating as TwitterUserAuth")
                     auth = TwitterUserAuth(**auth_dict)
                     return TwitterUserAPI(auth=auth)
-                except (ValueError, TypeError):
-                    raise ValueError("Invalid Twitter authentication configuration")
-    
-    # Default to TwitterUserAPI with settings-based auth
+            except (ValueError, TypeError) as e:
+                raise ValueError(
+                    f"Invalid Twitter authentication configuration: {str(e)}"
+                )
     return TwitterUserAPI()
 
 
@@ -147,8 +149,10 @@ twitter_toolkit = Toolkit.create_toolkit(
         twitter_unschedule_tweet,
     ],
     auth_key=AUTH_PREFIX,
-    auth_config_schema=TwitterAuthConfig,
+    auth_config_schema=Union[TwitterUserAuth | TweepyAuth],
     requires_config=True,
     name="Twitter User Toolkit",
-    description="Toolkit for interacting with twitter using either OAuth or user authentication.",
+    description="""
+        A toolkit for interacting with twitter using either OAuth or user authentication.
+    """,
 )

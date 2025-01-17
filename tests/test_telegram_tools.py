@@ -45,7 +45,6 @@ def test_get_telegram_api_without_token():
         assert api.token is None
 
 
-
 async def test_telegram_send_message(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -67,7 +66,6 @@ async def test_telegram_send_message(mock_api):
     assert result["result"]["text"] == "Test message"
     assert result["result"]["message_id"] == 123
     mock_api._make_request.assert_called_once()
-
 
 
 async def test_telegram_send_photo(mock_api):
@@ -93,7 +91,6 @@ async def test_telegram_send_photo(mock_api):
     mock_api._make_request.assert_called_once()
 
 
-
 async def test_telegram_send_document(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -117,7 +114,6 @@ async def test_telegram_send_document(mock_api):
     mock_api._make_request.assert_called_once()
 
 
-
 async def test_telegram_get_webhook_info(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -136,7 +132,6 @@ async def test_telegram_get_webhook_info(mock_api):
     assert result["ok"] is True
     assert result["result"]["url"] == "https://example.com/webhook"
     mock_api._make_request.assert_called_once()
-
 
 
 async def test_telegram_set_webhook(mock_api):
@@ -161,7 +156,6 @@ async def test_telegram_set_webhook(mock_api):
     mock_api._make_request.assert_called_once()
 
 
-
 async def test_telegram_delete_webhook(mock_api):
     mock_api._make_request.return_value = {
         "ok": True,
@@ -176,7 +170,6 @@ async def test_telegram_delete_webhook(mock_api):
 
     assert result is True
     mock_api._make_request.assert_called_once()
-
 
 
 async def test_telegram_send_message_with_reply(mock_api):

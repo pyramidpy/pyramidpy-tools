@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Dict
 
 from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
@@ -6,16 +6,23 @@ from controlflow.tools.tools import tool
 from pyramidpy_tools.toolkit import Toolkit
 
 from .base import SlackAPI
+from .schemas import SlackAuthConfigSchema
 
 
 def get_slack_api() -> SlackAPI:
     """Get Slack API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        bot_token = flow.context.get("auth", {}).get("slack_bot_token")
-        team_id = flow.context.get("auth", {}).get("slack_team_id")
-        if bot_token and team_id:
-            return SlackAPI(bot_token=bot_token, team_id=team_id)
+        print(flow.context)
+        auth = flow.context.get("auth", {})
+        if auth:
+            try:
+                print(auth)
+                auth = SlackAuthConfigSchema(**auth)
+                print(auth)
+                return SlackAPI(token=auth.slack_api_token)
+            except Exception as e:
+                raise ValueError("Slack API token not configured") from e
     return SlackAPI()
 
 
@@ -34,9 +41,14 @@ async def slack_list_channels(limit: Optional[int] = 100, cursor: Optional[str] 
     description="Post a new message to a Slack channel",
     include_return_description=False,
 )
-async def slack_post_message(channel_id: str, text: str):
+async def slack_post_message(
+    channel_id: str,
+    text: str,
+    attachments: Optional[List[Dict]] = None,
+    thread_ts: Optional[str] = None,
+):
     slack = get_slack_api()
-    return await slack.post_message(channel_id, text)
+    return await slack.post_message(channel_id, text, attachments, thread_ts)
 
 
 @tool(
@@ -44,9 +56,14 @@ async def slack_post_message(channel_id: str, text: str):
     description="Reply to a specific message thread in Slack",
     include_return_description=False,
 )
-async def slack_reply_to_thread(channel_id: str, thread_ts: str, text: str):
+async def slack_reply_to_thread(
+    channel_id: str,
+    thread_ts: str,
+    text: str,
+    attachments: Optional[List[Dict]] = None,
+):
     slack = get_slack_api()
-    return await slack.reply_to_thread(channel_id, thread_ts, text)
+    return await slack.reply_to_thread(channel_id, thread_ts, text, attachments)
 
 
 @tool(
@@ -112,8 +129,8 @@ slack_toolkit = Toolkit.create_toolkit(
         slack_get_user_profile,
     ],
     auth_key="slack_auth",
+    auth_config_schema=SlackAuthConfigSchema,
     requires_config=True,
     name="Slack Toolkit",
     description="Tools for interacting with Slack API",
 )
-

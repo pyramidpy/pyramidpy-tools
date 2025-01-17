@@ -135,13 +135,13 @@ Available commands:
 
             info_text = f"""
 Channel Information:
-• Name: {channel.get('name', 'Unknown')}
-• ID: {channel.get('id', 'Unknown')}
-• Type: {channel.get('type', 'Unknown')}
-• Topic: {channel.get('topic', 'No topic set')}
+• Name: {channel.get("name", "Unknown")}
+• ID: {channel.get("id", "Unknown")}
+• Type: {channel.get("type", "Unknown")}
+• Topic: {channel.get("topic", "No topic set")}
 
-Server ID: {payload.guild_id or 'Not in a server'}
-Timestamp: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}
+Server ID: {payload.guild_id or "Not in a server"}
+Timestamp: {datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")}
             """
 
             return {"type": 4, "data": {"content": info_text.strip()}}

@@ -22,4 +22,4 @@ __all__ = [
     "delete_data",
     "delete_application",
     "application_toolkit",
-] 
+]

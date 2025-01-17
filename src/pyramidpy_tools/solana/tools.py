@@ -14,8 +14,9 @@ from .schemas import (
     MoonshotTradeResponse,
     CreateDLMMPoolResponse,
     PriceResponse,
-    TokenDataResponse
+    TokenDataResponse,
 )
+
 
 def get_solana_api() -> SolanaAPI:
     """Get Solana API instance with config from context if available"""
@@ -26,6 +27,7 @@ def get_solana_api() -> SolanaAPI:
             return SolanaAPI(rpc_url=rpc_url)
     return SolanaAPI()
 
+
 @tool(
     name="solana_get_balance",
     description="Get the balance of SOL or an SPL token for the wallet",
@@ -35,24 +37,20 @@ async def get_balance(token_address: Optional[str] = None) -> BalanceResponse:
     solana = get_solana_api()
     return await solana.get_balance(token_address)
 
+
 @tool(
     name="solana_deploy_token",
     description="Deploy a new SPL token with initial supply",
     include_return_description=False,
 )
 async def deploy_token(
-    name: str,
-    symbol: str,
-    decimals: int,
-    initial_supply: float
+    name: str, symbol: str, decimals: int, initial_supply: float
 ) -> TokenDeployResponse:
     solana = get_solana_api()
     return await solana.deploy_token(
-        name=name,
-        symbol=symbol,
-        decimals=decimals,
-        initial_supply=initial_supply
+        name=name, symbol=symbol, decimals=decimals, initial_supply=initial_supply
     )
+
 
 @tool(
     name="solana_burn_and_close",
@@ -60,14 +58,13 @@ async def deploy_token(
     include_return_description=False,
 )
 async def burn_and_close(
-    token_address: str,
-    token_account: str
+    token_address: str, token_account: str
 ) -> BurnAndCloseResponse:
     solana = get_solana_api()
     return await solana.burn_and_close(
-        token_address=token_address,
-        token_account=token_account
+        token_address=token_address, token_account=token_account
     )
+
 
 @tool(
     name="solana_trade_raydium",
@@ -79,7 +76,7 @@ async def trade_raydium(
     amount: float,
     is_buy: bool = True,
     slippage: int = 5,
-    percentage: Optional[int] = None
+    percentage: Optional[int] = None,
 ) -> TradeResponse:
     solana = get_solana_api()
     return await solana.trade_with_raydium(
@@ -87,8 +84,9 @@ async def trade_raydium(
         amount=amount,
         is_buy=is_buy,
         slippage=slippage,
-        percentage=percentage
+        percentage=percentage,
     )
+
 
 @tool(
     name="solana_trade_moonshot",
@@ -100,7 +98,7 @@ async def trade_moonshot(
     is_buy: bool = True,
     collateral_amount: Optional[float] = 0.01,
     token_amount: Optional[float] = None,
-    slippage_bps: int = 500
+    slippage_bps: int = 500,
 ) -> MoonshotTradeResponse:
     solana = get_solana_api()
     return await solana.trade_with_moonshot(
@@ -108,8 +106,9 @@ async def trade_moonshot(
         is_buy=is_buy,
         collateral_amount=collateral_amount,
         token_amount=token_amount,
-        slippage_bps=slippage_bps
+        slippage_bps=slippage_bps,
     )
+
 
 @tool(
     name="solana_create_meteora_pool",
@@ -117,11 +116,7 @@ async def trade_moonshot(
     include_return_description=False,
 )
 async def create_meteora_pool(
-    token_a: str,
-    token_b: str,
-    amount_a: float,
-    amount_b: float,
-    fee_rate: float
+    token_a: str, token_b: str, amount_a: float, amount_b: float, fee_rate: float
 ) -> CreateDLMMPoolResponse:
     solana = get_solana_api()
     return await solana.create_meteora_pool(
@@ -129,8 +124,9 @@ async def create_meteora_pool(
         token_b=token_b,
         amount_a=amount_a,
         amount_b=amount_b,
-        fee_rate=fee_rate
+        fee_rate=fee_rate,
     )
+
 
 @tool(
     name="solana_get_token_price",
@@ -138,14 +134,13 @@ async def create_meteora_pool(
     include_return_description=False,
 )
 async def get_token_price(
-    token_address: str,
-    vs_currency: str = "usd"
+    token_address: str, vs_currency: str = "usd"
 ) -> PriceResponse:
     solana = get_solana_api()
     return await solana.get_token_price(
-        token_address=token_address,
-        vs_currency=vs_currency
+        token_address=token_address, vs_currency=vs_currency
     )
+
 
 @tool(
     name="solana_get_token_data",
@@ -155,6 +150,7 @@ async def get_token_price(
 async def get_token_data(token_address: str) -> TokenDataResponse:
     solana = get_solana_api()
     return await solana.get_token_data(token_address)
+
 
 solana_toolkit = Toolkit.create_toolkit(
     id="solana_toolkit",
@@ -166,10 +162,10 @@ solana_toolkit = Toolkit.create_toolkit(
         trade_moonshot,
         create_meteora_pool,
         get_token_price,
-        get_token_data
+        get_token_data,
     ],
     auth_key="solana_auth",
     requires_config=True,
     name="Solana Toolkit",
-    description="Tools for interacting with Solana blockchain"
-) 
+    description="Tools for interacting with Solana blockchain",
+)

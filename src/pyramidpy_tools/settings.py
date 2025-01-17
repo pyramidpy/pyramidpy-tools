@@ -1,14 +1,17 @@
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class StorageSettings(BaseSettings):
     """
     Settings for storage.
     """
+
     postgres_url: str | None = None
     chroma_url: str | None = None
     pgvector_url: str | None = None
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
 
 class ToolProviderSettings(BaseSettings):
     """
@@ -40,8 +43,23 @@ class ToolProviderSettings(BaseSettings):
     storage: StorageSettings = StorageSettings()
 
 
+class LLMProviderSettings(BaseSettings):
+    """
+    Settings for LLM providers.
+    """
+
+    openai_api_key: SecretStr | None = None
+    anthropic_api_key: SecretStr | None = None
+    google_api_key: SecretStr | None = None
+    groq_api_key: SecretStr | None = None
+    ollama_api_key: SecretStr | None = None
+
+
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
     tool_provider: ToolProviderSettings = ToolProviderSettings()
     storage: StorageSettings = StorageSettings()
-    
+    llm: LLMProviderSettings = LLMProviderSettings()
+
+
 settings = Settings()

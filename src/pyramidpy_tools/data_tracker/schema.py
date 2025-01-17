@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class TokenInsights(BaseModel):
     summary: Optional[str] = None
     catalysts: Optional[str] = None
     twitter: Optional[str] = None
     github: Optional[str] = None
+
 
 class Token(BaseModel):
     symbol: str
