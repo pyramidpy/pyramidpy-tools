@@ -7,7 +7,9 @@ from ..application.base import ApplicationStorage
 logger = logging.getLogger(__name__)
 
 
-def get_conversation_thread(tweet_id: int, api, max_depth: int = 10) -> List[Dict[str, Any]]:
+def get_conversation_thread(
+    tweet_id: int, api, max_depth: int = 10
+) -> List[Dict[str, Any]]:
     """
     Build a conversation thread from a tweet by following reply chains up to max_depth.
 
@@ -36,7 +38,9 @@ def get_conversation_thread(tweet_id: int, api, max_depth: int = 10) -> List[Dic
     return thread
 
 
-def handle_tweet_interaction(tweet_data: Dict[str, Any], api) -> Optional[Dict[str, Any]]:
+def handle_tweet_interaction(
+    tweet_data: Dict[str, Any], api
+) -> Optional[Dict[str, Any]]:
     """
     Process and handle a single tweet interaction, determining if and how to respond.
 
@@ -97,9 +101,7 @@ def _should_respond_to_tweet(
 
 
 def _generate_response(
-    tweet_data: Dict[str, Any], 
-    thread: List[Dict[str, Any]],
-    api
+    tweet_data: Dict[str, Any], thread: List[Dict[str, Any]], api
 ) -> Optional[str]:
     """
     Generate an appropriate response text for a tweet based on its content and context.
@@ -117,9 +119,9 @@ def _generate_response(
         context = {
             "tweet": tweet_data.get("text", ""),
             "thread": [t.get("text", "") for t in thread],
-            "user": tweet_data.get("user", {}).get("screen_name", "")
+            "user": tweet_data.get("user", {}).get("screen_name", ""),
         }
-        
+
         # Use API's response generation
         return api.generate_response(context)
     except Exception as e:
@@ -153,10 +155,7 @@ def process_twitter_interactions(api, check_interval: int = 120) -> None:
 
 def _is_tweet_processed(tweet_id: int, storage: ApplicationStorage) -> bool:
     """Check if a tweet has already been processed to avoid duplicate responses."""
-    results = storage.search_data(
-        "twitter_processed",
-        filters={"tweet_id": tweet_id}
-    )
+    results = storage.search_data("twitter_processed", filters={"tweet_id": tweet_id})
     return len(results) > 0
 
 
@@ -164,8 +163,5 @@ def _mark_tweet_processed(tweet_id: int, storage: ApplicationStorage) -> None:
     """Mark a tweet as processed after handling it."""
     storage.add_data(
         "twitter_processed",
-        {
-            "tweet_id": tweet_id,
-            "processed_at": datetime.now().timestamp()
-        }
+        {"tweet_id": tweet_id, "processed_at": datetime.now().timestamp()},
     )

@@ -157,4 +157,4 @@ class GetUserProfileResponse(SlackResponse):
 
 
 class SlackAuthConfigSchema(BaseModel):
-    slack_api_token: str = Field(..., description="Slack API token")
+    slack_api_token: str = Field(description="Slack API token")

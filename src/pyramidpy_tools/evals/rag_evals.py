@@ -1,6 +1,5 @@
 import numpy as np
 from typing import List, Optional
-from ragas import RAG
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 from ragas import EvaluationDataset

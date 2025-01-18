@@ -91,10 +91,7 @@ def test_get_github_api_without_token():
     with patch("pyramidpy_tools.github.tools.get_flow") as mock_get_flow:
         mock_get_flow.return_value = None
         with patch("pyramidpy_tools.github.tools.settings") as mock_settings:
-            mock_settings.tool_provider.github_token = MagicMock()
-            mock_settings.tool_provider.github_token.get_secret_value.return_value = (
-                "default-token"
-            )
+            mock_settings.tool_provider.github_token = "default-token"
             api = get_github_api()
             assert isinstance(api, GitHubAPI)
             assert api.auth.token == "default-token"

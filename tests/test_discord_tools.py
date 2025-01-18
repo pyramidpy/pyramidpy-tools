@@ -2,7 +2,6 @@ from typing import Any, Dict
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
-
 from pyramidpy_tools.discord_bot.base import DiscordAPI
 from pyramidpy_tools.discord_bot.schemas import (
     AddReactionRequest,
@@ -27,7 +26,7 @@ from pyramidpy_tools.discord_bot.tools import (
 
 @pytest.fixture
 def mock_discord_api():
-    with patch("pyramidpy_tools.tools.discord.tools.DiscordAPI") as mock:
+    with patch("pyramidpy_tools.discord_bot.tools.DiscordAPI") as mock:
         mock_instance = Mock()
         mock_instance.send_message = AsyncMock()
         mock_instance.edit_message = AsyncMock()
@@ -176,17 +175,13 @@ class TestDiscordTools:
         mock_discord_api.get_message.assert_called_once_with("123", "456")
 
     def test_get_discord_api_with_token(self):
-        with patch("pyramidpy_tools.tools.discord.tools.get_flow") as mock_get_flow:
+        with patch("pyramidpy_tools.discord_bot.tools.get_flow") as mock_get_flow:
             mock_flow = Mock()
-            mock_flow.context = {"discord_bot_token": "test-token"}
+            mock_flow.context = {"auth": {"discord_bot_token": "test-token"}}
             mock_get_flow.return_value = mock_flow
 
-            api = get_discord_api()
-            assert isinstance(api, DiscordAPI)
-
-    def test_get_discord_api_without_token(self):
-        with patch("pyramidpy_tools.tools.discord.tools.get_flow") as mock_get_flow:
-            mock_get_flow.return_value = None
-
-            api = get_discord_api()
-            assert isinstance(api, DiscordAPI)
+            with patch("pyramidpy_tools.settings.settings") as mock_settings:
+                mock_settings.tool_provider.discord_bot_token = "default-token"
+                api = get_discord_api()
+                assert isinstance(api, DiscordAPI)
+                assert api.token == "test-token"

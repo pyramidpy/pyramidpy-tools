@@ -181,9 +181,9 @@ class GitHubAPI:
             name=options.name,
             description=to_github_optional(options.description),
             private=options.private,
-            has_issues=to_github_optional(options.has_issues),
-            has_wiki=to_github_optional(options.has_wiki),
-            has_downloads=to_github_optional(options.has_downloads),
+            has_issues=to_github_optional(False),
+            has_wiki=to_github_optional(False),
+            has_downloads=to_github_optional(False),
             auto_init=to_github_optional(options.auto_init),
         )
 

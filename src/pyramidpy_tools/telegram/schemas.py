@@ -74,3 +74,7 @@ class WebhookInfo(BaseModel):
     last_error_message: Optional[str] = None
     max_connections: Optional[int] = None
     allowed_updates: Optional[List[str]] = None
+
+
+class TelegramAuthConfig(BaseModel):
+    telegram_bot_token: str = Field(..., description="Telegram bot token")

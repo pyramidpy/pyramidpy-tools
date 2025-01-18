@@ -18,35 +18,34 @@ Keep it under {max_length} characters.
 Include relevant hashtags if appropriate.
 """
 
+
 def compose_context(state: Dict[str, Any], template: str) -> str:
     """
     Compose context for tweet generation from state and template.
-    
+
     Args:
         state: State dictionary containing agent info, topics etc
         template: Template string to use
-        
+
     Returns:
         Composed context string
     """
     # Extract relevant info from state
     topic = state.get("topic", "")
     max_length = state.get("max_length", 280)
-    
+
     # Format template with state values
-    return template.format(
-        topic=topic,
-        max_length=max_length
-    )
+    return template.format(topic=topic, max_length=max_length)
+
 
 def generate_text(context: str, api) -> Optional[str]:
     """
     Generate text content using the API's text generation capabilities.
-    
+
     Args:
         context: Context string for generation
         api: Twitter API instance
-        
+
     Returns:
         Generated text or None if generation failed
     """
@@ -56,6 +55,7 @@ def generate_text(context: str, api) -> Optional[str]:
     except Exception as e:
         logger.error(f"Error generating text: {e}")
         return None
+
 
 def clean_tweet_content(content: str, max_length: int = 280) -> str:
     """
@@ -102,6 +102,7 @@ def clean_tweet_content(content: str, max_length: int = 280) -> str:
             content = content[:last_space].strip() + "..."
 
     return content
+
 
 def generate_tweet_content(
     state: Dict[str, Any],
@@ -277,15 +278,14 @@ def process_and_cache_tweet(
     }
 
     # Store in vector store
-    storage.add_data(
-        "twitter_tweets",
-        tweet_data
-    )
+    storage.add_data("twitter_tweets", tweet_data)
 
     logger.info(f"Tweet posted: {tweet['permanent_url']}")
 
 
-def schedule_tweet(content: str, scheduled_time: datetime, api) -> Optional[Dict[str, Any]]:
+def schedule_tweet(
+    content: str, scheduled_time: datetime, api
+) -> Optional[Dict[str, Any]]:
     """
     Schedule a tweet for later posting.
 

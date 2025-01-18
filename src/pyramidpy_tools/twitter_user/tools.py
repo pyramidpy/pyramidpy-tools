@@ -149,7 +149,7 @@ twitter_toolkit = Toolkit.create_toolkit(
         twitter_unschedule_tweet,
     ],
     auth_key=AUTH_PREFIX,
-    auth_config_schema=Union[TwitterUserAuth | TweepyAuth],
+    auth_config_schema=TwitterUserAuth,
     requires_config=True,
     name="Twitter User Toolkit",
     description="""

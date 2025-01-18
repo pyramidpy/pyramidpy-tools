@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class DiscordUser(BaseModel):
@@ -109,3 +109,11 @@ class WebhookPayload(BaseModel):
     timestamp: str
     interaction: Optional[Dict[str, Any]] = None
     data: Optional[Dict[str, Any]] = None
+
+
+class DiscordBotTokenSchema(BaseModel):
+    """Discord bot token schema"""
+
+    discord_bot_token: str = Field(
+        description="The token for the Discord bot",
+    )

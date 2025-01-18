@@ -13,6 +13,7 @@ from .schemas import (
     EditMessageRequest,
     RemoveReactionRequest,
     SendMessageRequest,
+    DiscordBotTokenSchema,
 )
 
 
@@ -20,9 +21,11 @@ def get_discord_api() -> DiscordAPI:
     """Get Discord API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        token = flow.context.get("auth", {}).get("discord_bot_token")
-        if token:
-            return DiscordAPI(token=token)
+        auth = flow.context.get("auth", {})
+        if auth:
+            auth = DiscordBotTokenSchema(**auth)
+            if auth.discord_bot_token:
+                return DiscordAPI(token=auth.discord_bot_token)
     return DiscordAPI()
 
 
@@ -193,6 +196,7 @@ discord_toolkit = Toolkit.create_toolkit(
     requires_config=True,
     is_app_default=True,
     auth_key="discord_bot_token",
+    auth_schema_config=DiscordBotTokenSchema,
     name="Discord Bot API Toolkit",
     description="Tools for interacting with Discord using bot API",
 )

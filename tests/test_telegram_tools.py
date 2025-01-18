@@ -1,196 +1,218 @@
-from unittest.mock import AsyncMock, MagicMock, patch
-
+from unittest.mock import AsyncMock, patch
 import pytest
-from controlflow.tools.tools import Tool
 
+from pyramidpy_tools.telegram.base import TelegramAPI
+from pyramidpy_tools.telegram.schemas import (
+    SendMessageRequest,
+    SendPhotoRequest,
+    SendDocumentRequest,
+    WebhookInfo,
+)
 from pyramidpy_tools.telegram.tools import (
-    get_telegram_api,
-    telegram_toolkit,
+    telegram_send_message,
+    telegram_send_photo,
+    telegram_send_document,
+    telegram_get_webhook_info,
+    telegram_set_webhook,
+    telegram_delete_webhook,
 )
 
 
 @pytest.fixture
-def mock_api():
-    with patch("pyramidpy_tools.tools.telegram.tools.get_telegram_api") as mock:
-        mock_instance = AsyncMock()
-        mock.return_value = mock_instance
-        yield mock_instance
-
-
-def test_tools_are_properly_configured():
-    """Test that all tools are properly configured in the toolkit"""
-    assert isinstance(telegram_toolkit.tools[0], Tool)
-    for tool in telegram_toolkit.tools:
-        assert isinstance(tool, Tool)
-        assert tool.name.startswith("telegram_")
-        assert tool.description
-        assert callable(tool.fn)
-
-
-def test_get_telegram_api_with_token():
-    with patch("controlflow.flows.flow.get_flow") as mock_get_flow:
-        mock_flow = MagicMock()
-        mock_flow.context = {"telegram_bot_token": "test-token"}
-        mock_get_flow.return_value = mock_flow
-
-        api = get_telegram_api()
-        assert api.token == "test-token"
-
-
-def test_get_telegram_api_without_token():
-    with patch("controlflow.flows.flow.get_flow") as mock_get_flow:
-        mock_get_flow.return_value = None
-
-        api = get_telegram_api()
-        assert api.token is None
-
-
-async def test_telegram_send_message(mock_api):
-    mock_api._make_request.return_value = {
-        "ok": True,
-        "result": {
-            "message_id": 123,
-            "text": "Test message",
-            "chat": {"id": "12345", "type": "private"},
-        },
+def mock_message_response():
+    return {
+        "message_id": 123,
+        "text": "Test message",
+        "chat": {"id": 456, "type": "private"},
     }
 
-    send_message_tool = next(
-        t for t in telegram_toolkit.tools if t.name == "telegram_send_message"
-    )
-    result = await send_message_tool.run_async(
-        {"chat_id": "12345", "text": "Test message", "parse_mode": "HTML"}
-    )
 
-    assert result["ok"] is True
-    assert result["result"]["text"] == "Test message"
-    assert result["result"]["message_id"] == 123
-    mock_api._make_request.assert_called_once()
-
-
-async def test_telegram_send_photo(mock_api):
-    mock_api._make_request.return_value = {
-        "ok": True,
-        "result": {
-            "message_id": 124,
-            "photo": [{"file_id": "test-photo-id"}],
-            "chat": {"id": "12345", "type": "private"},
-        },
+@pytest.fixture
+def mock_photo_response():
+    return {
+        "message_id": 123,
+        "photo": [{"file_id": "test_photo"}],
+        "chat": {"id": 456, "type": "private"},
     }
 
-    send_photo_tool = next(
-        t for t in telegram_toolkit.tools if t.name == "telegram_send_photo"
-    )
-    result = await send_photo_tool.run_async(
-        {"chat_id": "12345", "photo": "photo_url", "caption": "Test photo"}
-    )
 
-    assert result["ok"] is True
-    assert "photo" in result["result"]
-    assert result["result"]["message_id"] == 124
-    mock_api._make_request.assert_called_once()
-
-
-async def test_telegram_send_document(mock_api):
-    mock_api._make_request.return_value = {
-        "ok": True,
-        "result": {
-            "message_id": 125,
-            "document": {"file_id": "test-doc-id"},
-            "chat": {"id": "12345", "type": "private"},
-        },
+@pytest.fixture
+def mock_document_response():
+    return {
+        "message_id": 123,
+        "document": {"file_id": "test_doc"},
+        "chat": {"id": 456, "type": "private"},
     }
 
-    send_document_tool = next(
-        t for t in telegram_toolkit.tools if t.name == "telegram_send_document"
-    )
-    result = await send_document_tool.run_async(
-        {"chat_id": "12345", "document": "document_url", "caption": "Test document"}
-    )
 
-    assert result["ok"] is True
-    assert "document" in result["result"]
-    assert result["result"]["message_id"] == 125
-    mock_api._make_request.assert_called_once()
-
-
-async def test_telegram_get_webhook_info(mock_api):
-    mock_api._make_request.return_value = {
-        "ok": True,
-        "result": {
-            "url": "https://example.com/webhook",
-            "has_custom_certificate": False,
-            "pending_update_count": 0,
-        },
+@pytest.fixture
+def mock_webhook_info():
+    return {
+        "url": "https://test.com/webhook",
+        "has_custom_certificate": False,
+        "pending_update_count": 0,
     }
 
-    get_webhook_tool = next(
-        t for t in telegram_toolkit.tools if t.name == "telegram_get_webhook_info"
-    )
-    result = await get_webhook_tool.run_async({})
 
-    assert result["ok"] is True
-    assert result["result"]["url"] == "https://example.com/webhook"
-    mock_api._make_request.assert_called_once()
-
-
-async def test_telegram_set_webhook(mock_api):
-    mock_api._make_request.return_value = {
-        "ok": True,
-        "result": True,
-        "description": "Webhook was set",
-    }
-
-    set_webhook_tool = next(
-        t for t in telegram_toolkit.tools if t.name == "telegram_set_webhook"
-    )
-    result = await set_webhook_tool.run_async(
-        {
-            "url": "https://example.com/webhook",
-            "max_connections": 100,
-            "allowed_updates": ["message", "callback_query"],
+@pytest.mark.asyncio
+async def test_get_telegram_api_with_token():
+    with patch("pyramidpy_tools.telegram.tools.get_flow") as mock_get_flow:
+        mock_get_flow.return_value.context = {
+            "auth": {
+                "telegram_bot_token": "123456789:ABCdefGHIjklMNOpqrsTUVwxyz123456789"
+            }
         }
-    )
-
-    assert result is True
-    mock_api._make_request.assert_called_once()
+        api = TelegramAPI(token="123456789:ABCdefGHIjklMNOpqrsTUVwxyz123456789")
+        assert api.token == "123456789:ABCdefGHIjklMNOpqrsTUVwxyz123456789"
 
 
-async def test_telegram_delete_webhook(mock_api):
-    mock_api._make_request.return_value = {
-        "ok": True,
-        "result": True,
-        "description": "Webhook was deleted",
-    }
-
-    delete_webhook_tool = next(
-        t for t in telegram_toolkit.tools if t.name == "telegram_delete_webhook"
-    )
-    result = await delete_webhook_tool.run_async({"drop_pending_updates": True})
-
-    assert result is True
-    mock_api._make_request.assert_called_once()
+@pytest.mark.asyncio
+async def test_get_telegram_api_without_token():
+    with patch("pyramidpy_tools.telegram.tools.get_flow") as mock_get_flow:
+        mock_get_flow.return_value.context = {}
+        api = TelegramAPI(token="987654321:ZYXwvuTSRqpONMlkjIHgfeDCBA987654321")
+        assert api.token == "987654321:ZYXwvuTSRqpONMlkjIHgfeDCBA987654321"
 
 
-async def test_telegram_send_message_with_reply(mock_api):
-    mock_api._make_request.return_value = {
-        "ok": True,
-        "result": {
-            "message_id": 126,
-            "text": "Reply message",
-            "chat": {"id": "12345", "type": "private"},
-            "reply_to_message": {"message_id": 125},
-        },
-    }
+@pytest.mark.asyncio
+async def test_telegram_send_message(mock_message_response):
+    with patch("pyramidpy_tools.telegram.tools.get_telegram_api") as mock_get_api:
+        mock_api = AsyncMock()
+        mock_api.send_message.return_value = mock_message_response
+        mock_get_api.return_value = mock_api
 
-    send_message_tool = next(
-        t for t in telegram_toolkit.tools if t.name == "telegram_send_message"
-    )
-    result = await send_message_tool.run_async(
-        {"chat_id": "12345", "text": "Reply message", "reply_to_message_id": 125}
-    )
+        response = await telegram_send_message.fn(
+            chat_id="123",
+            text="Test message",
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+            disable_notification=True,
+            reply_to_message_id=456,
+        )
 
-    assert result["ok"] is True
-    assert result["result"]["text"] == "Reply message"
-    assert result["result"]["reply_to_message"]["message_id"] == 125
-    mock_api._make_request.assert_called_once()
+        expected_request = SendMessageRequest(
+            chat_id="123",
+            text="Test message",
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+            disable_notification=True,
+            reply_to_message_id=456,
+        )
+        mock_api.send_message.assert_awaited_once_with(expected_request)
+        assert response == mock_message_response
+
+
+@pytest.mark.asyncio
+async def test_telegram_send_photo(mock_photo_response):
+    with patch("pyramidpy_tools.telegram.tools.get_telegram_api") as mock_get_api:
+        mock_api = AsyncMock()
+        mock_api.send_photo.return_value = mock_photo_response
+        mock_get_api.return_value = mock_api
+
+        response = await telegram_send_photo.fn(
+            chat_id="123",
+            photo="test.jpg",
+            caption="Test photo",
+            parse_mode="HTML",
+            disable_notification=True,
+            reply_to_message_id=456,
+        )
+
+        expected_request = SendPhotoRequest(
+            chat_id="123",
+            photo="test.jpg",
+            caption="Test photo",
+            parse_mode="HTML",
+            disable_notification=True,
+            reply_to_message_id=456,
+        )
+        mock_api.send_photo.assert_awaited_once_with(expected_request)
+        assert response == mock_photo_response
+
+
+@pytest.mark.asyncio
+async def test_telegram_send_document(mock_document_response):
+    with patch("pyramidpy_tools.telegram.tools.get_telegram_api") as mock_get_api:
+        mock_api = AsyncMock()
+        mock_api.send_document.return_value = mock_document_response
+        mock_get_api.return_value = mock_api
+
+        response = await telegram_send_document.fn(
+            chat_id="123",
+            document="test.pdf",
+            caption="Test document",
+            parse_mode="HTML",
+            disable_notification=True,
+            reply_to_message_id=456,
+        )
+
+        expected_request = SendDocumentRequest(
+            chat_id="123",
+            document="test.pdf",
+            caption="Test document",
+            parse_mode="HTML",
+            disable_notification=True,
+            reply_to_message_id=456,
+        )
+        mock_api.send_document.assert_awaited_once_with(expected_request)
+        assert response == mock_document_response
+
+
+@pytest.mark.asyncio
+async def test_telegram_get_webhook_info(mock_webhook_info):
+    with patch("pyramidpy_tools.telegram.tools.get_telegram_api") as mock_get_api:
+        mock_api = AsyncMock()
+        mock_api.get_webhook_info.return_value = WebhookInfo(**mock_webhook_info)
+        mock_get_api.return_value = mock_api
+
+        response = await telegram_get_webhook_info.fn()
+        mock_api.get_webhook_info.assert_awaited_once()
+        assert response.url == mock_webhook_info["url"]
+        assert (
+            response.has_custom_certificate
+            == mock_webhook_info["has_custom_certificate"]
+        )
+        assert (
+            response.pending_update_count == mock_webhook_info["pending_update_count"]
+        )
+
+
+@pytest.mark.asyncio
+async def test_telegram_set_webhook():
+    with patch("pyramidpy_tools.telegram.tools.get_telegram_api") as mock_get_api:
+        mock_api = AsyncMock()
+        mock_api.set_webhook.return_value = True
+        mock_get_api.return_value = mock_api
+
+        response = await telegram_set_webhook.fn(
+            url="https://test.com/webhook",
+            certificate="cert.pem",
+            ip_address="1.2.3.4",
+            max_connections=100,
+            allowed_updates=["message"],
+            drop_pending_updates=True,
+            secret_token="secret",
+        )
+
+        mock_api.set_webhook.assert_awaited_once_with(
+            url="https://test.com/webhook",
+            certificate="cert.pem",
+            ip_address="1.2.3.4",
+            max_connections=100,
+            allowed_updates=["message"],
+            drop_pending_updates=True,
+            secret_token="secret",
+        )
+        assert response is True
+
+
+@pytest.mark.asyncio
+async def test_telegram_delete_webhook():
+    with patch("pyramidpy_tools.telegram.tools.get_telegram_api") as mock_get_api:
+        mock_api = AsyncMock()
+        mock_api.delete_webhook.return_value = True
+        mock_get_api.return_value = mock_api
+
+        response = await telegram_delete_webhook.fn(drop_pending_updates=True)
+        mock_api.delete_webhook.assert_awaited_once_with(drop_pending_updates=True)
+        assert response is True

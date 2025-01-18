@@ -1,13 +1,6 @@
 from typing import Any, List, Optional
 from github import GithubObject
 
-
-def to_github_optional(value: Any) -> Any:
-    """Convert None to GithubObject.NotSet for optional parameters."""
-    return GithubObject.NotSet if value is None else value
-
-
-
 from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
 from pyramidpy_tools.settings import settings
@@ -25,6 +18,10 @@ from .schemas import (
 
 AUTH_KEY = "github_token"
 
+def to_github_optional(value: Any) -> Any:
+    """Convert None to GithubObject.NotSet for optional parameters."""
+    return GithubObject.NotSet if value is None else value
+
 
 def get_github_api() -> GitHubAPI:
     """Get GitHub API instance with token from context if available"""
@@ -37,9 +34,7 @@ def get_github_api() -> GitHubAPI:
                 return GitHubAPI(auth=auth)
             except Exception as e:
                 raise ValueError(f"Invalid GitHub token: {e}")
-    return GitHubAPI(
-        auth=GitHubAuth(token=settings.tool_provider.github_token.get_secret_value())
-    )
+    return GitHubAPI(auth=GitHubAuth(token=settings.tool_provider.github_token))
 
 
 @tool(
