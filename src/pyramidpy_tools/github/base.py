@@ -5,7 +5,7 @@ from typing import List, Optional
 from github import Github, GithubObject, Auth
 from github.ContentFile import ContentFile
 from github.GithubException import GithubException
-from github.Repository import Repository
+from github.Repository import Repository, InputGitAuthor
 
 from .schemas import (
     CreateBranchOptions,
@@ -106,6 +106,8 @@ class GitHubAPI:
         message: str,
         branch: str,
         sha: Optional[str] = None,
+        committer: Optional[InputGitAuthor] = None,
+        author: Optional[InputGitAuthor] = None,
     ):
         repository = await self._get_repo(owner, repo)
         encoded_content = base64.b64encode(content.encode()).decode()
@@ -116,7 +118,6 @@ class GitHubAPI:
             message=message,
             content=encoded_content,
             branch=branch,
-            sha=sha,
         )
 
     async def push_files(
