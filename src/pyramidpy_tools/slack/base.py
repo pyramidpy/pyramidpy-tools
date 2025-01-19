@@ -29,7 +29,7 @@ def format_as_chat_message(message: dict) -> dict:
 
 class SlackAPI:
     def __init__(self, token: str | None = None):
-        token = token or settings.tool_provider.slack_api_token.get_secret_value()
+        token = token or settings.tool_provider.slack_api_token
         if not token:
             raise ValueError("Slack API token not configured")
         self.client = WebClient(token=token)

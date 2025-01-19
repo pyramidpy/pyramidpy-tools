@@ -14,7 +14,7 @@ from pyramidpy_tools.settings import settings
 class TavilyAPI:
     def __init__(self, api_key: str | None = None):
         self.client = TavilyClient(
-            api_key=api_key or settings.tool_provider.tavily_api_key.get_secret_value()
+            api_key=api_key or settings.tool_provider.tavily_api_key
         )
 
     async def search(

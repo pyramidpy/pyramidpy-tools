@@ -10,7 +10,6 @@ This repository provides ready-to-use tools and integrations to enhance your AI 
 
 ## 🌟 Features
 
-- Over 50+ tools across 5 categories
 - MCP server support
 - Tools include:
   - 🔍 **Tavily Search**: Integration with Tavily's AI-powered search API

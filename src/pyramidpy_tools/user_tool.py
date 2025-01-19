@@ -11,4 +11,7 @@ from controlflow.tools.tools import tool
     """,
 )
 async def user_tool(message: str):
-    return "Message received. User will reply asynchronously. Task can be marked as complete."
+    return """
+        Message sent to user. 
+        If the task is done you can mark it as complete, otherwise proceed with other tasks.
+    """

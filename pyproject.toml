@@ -69,6 +69,8 @@ dependencies = [
     "pygithub>=2.5.0",
     "ragas>=0.2.11",
     "fastembed>=0.2.7",
+    "shortuuid>=1.0.13",
+    "pyhumps>=3.8.0",
 ]
 
 [tool.uv.sources]

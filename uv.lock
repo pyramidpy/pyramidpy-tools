@@ -4111,6 +4111,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pyhumps"
+version = "3.8.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c4/83/fa6f8fb7accb21f39e8f2b6a18f76f6d90626bdb0a5e5448e5cc9b8ab014/pyhumps-3.8.0.tar.gz", hash = "sha256:498026258f7ee1a8e447c2e28526c0bea9407f9a59c03260aee4bd6c04d681a3", size = 9018 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9e/11/a1938340ecb32d71e47ad4914843775011e6e9da59ba1229f181fef3119e/pyhumps-3.8.0-py3-none-any.whl", hash = "sha256:060e1954d9069f428232a1adda165db0b9d8dfdce1d265d36df7fbff540acfd6", size = 6095 },
+]
+
+[[package]]
 name = "pyjwt"
 version = "2.10.1"
 source = { registry = "https://pypi.org/simple" }
@@ -4218,6 +4227,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pygithub" },
+    { name = "pyhumps" },
     { name = "pyjwt" },
     { name = "pynacl" },
     { name = "pytest-env" },
@@ -4227,6 +4237,7 @@ dependencies = [
     { name = "resend" },
     { name = "rich" },
     { name = "scrapyscript" },
+    { name = "shortuuid" },
     { name = "slack-sdk" },
     { name = "solana" },
     { name = "solders" },
@@ -4300,6 +4311,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.1.0" },
     { name = "pydantic-settings", specifier = ">=2.5.2" },
     { name = "pygithub", specifier = ">=2.5.0" },
+    { name = "pyhumps", specifier = ">=3.8.0" },
     { name = "pyjwt", specifier = ">=2.9.0" },
     { name = "pynacl", specifier = ">=1.5.0" },
     { name = "pytest", marker = "extra == 'tests'", specifier = ">=7.0.0" },
@@ -4317,6 +4329,7 @@ requires-dist = [
     { name = "rich", specifier = ">=13.9.2" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
     { name = "scrapyscript", specifier = ">=1.1.5" },
+    { name = "shortuuid", specifier = ">=1.0.13" },
     { name = "slack-sdk", specifier = ">=3.33.3" },
     { name = "solana", specifier = ">=0.36.2" },
     { name = "solders", specifier = ">=0.23.0" },
@@ -5144,6 +5157,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/58/15/8b3609fd3830ef7b27b655beb4b4e9c62313a4e8da8c676e142cc210d58e/shellingham-1.5.4.tar.gz", hash = "sha256:8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de", size = 10310 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e0/f9/0595336914c5619e5f28a1fb793285925a8cd4b432c9da0a987836c7f822/shellingham-1.5.4-py2.py3-none-any.whl", hash = "sha256:7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686", size = 9755 },
+]
+
+[[package]]
+name = "shortuuid"
+version = "1.0.13"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/e2/bcf761f3bff95856203f9559baf3741c416071dd200c0fc19fad7f078f86/shortuuid-1.0.13.tar.gz", hash = "sha256:3bb9cf07f606260584b1df46399c0b87dd84773e7b25912b7e391e30797c5e72", size = 9662 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c0/44/21d6bf170bf40b41396480d8d49ad640bca3f2b02139cd52aa1e272830a5/shortuuid-1.0.13-py3-none-any.whl", hash = "sha256:a482a497300b49b4953e15108a7913244e1bb0d41f9d332f5e9925dba33a3c5a", size = 10529 },
 ]
 
 [[package]]

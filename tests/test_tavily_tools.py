@@ -30,7 +30,7 @@ class TestTavilyAPI:
         with patch(
             "pyramidpy_tools.settings.settings.tool_provider.tavily_api_key"
         ) as mock_key:
-            mock_key.get_secret_value.return_value = "test-key"
+            mock_key.return_value = "test-key"
             with patch("controlflow.flows.flow.get_flow") as mock_get_flow:
                 mock_flow = MagicMock()
                 mock_flow.context = {"tavily_api_key": "test-key"}
@@ -43,7 +43,7 @@ class TestTavilyAPI:
         with patch(
             "pyramidpy_tools.settings.settings.tool_provider.tavily_api_key"
         ) as mock_key:
-            mock_key.get_secret_value.return_value = "test-key"
+            mock_key.return_value = "test-key"
             with patch("controlflow.flows.flow.get_flow") as mock_get_flow:
                 mock_get_flow.return_value = None
 
@@ -54,7 +54,7 @@ class TestTavilyAPI:
         with patch(
             "pyramidpy_tools.settings.settings.tool_provider.tavily_api_key"
         ) as mock_key:
-            mock_key.get_secret_value.return_value = None
+            mock_key.return_value = None
             with pytest.raises(tavily.errors.MissingAPIKeyError) as exc_info:
                 get_tavily_api()
                 assert "MissingAPIKeyError" in str(exc_info.value)

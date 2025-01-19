@@ -21,15 +21,15 @@ class ToolProviderSettings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    slack_api_token: SecretStr | None = None
-    jina_api_key: SecretStr | None = None
-    discord_api_token: SecretStr | None = None
-    discord_bot_token: SecretStr | None = None
+    slack_api_token: str | None = None
+    jina_api_key: str | None = None
+    discord_api_token: str | None = None
+    discord_bot_token: str | None = None
     discord_public_key: str | None = None
-    apify_api_key: SecretStr | None = None
-    tavily_api_key: SecretStr | None = None
-    github_token: SecretStr | None = None
-    telegram_bot_token: SecretStr | None = None
+    apify_api_key: str | None = None
+    tavily_api_key: str | None = None
+    github_token: str | None = None
+    telegram_bot_token: str | None = None
 
     # twitter
     twitter_username: str | None = None
