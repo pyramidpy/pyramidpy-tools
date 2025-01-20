@@ -131,7 +131,15 @@ async def github_create_pull_request(
 
 @tool(
     name="github_create_or_update_file",
-    description="Create or update a single file in a GitHub repository",
+    description="""Create or update a single file in a GitHub repository.
+    The SHA will be fetched automatically if updating an existing file.
+    Example:
+    {
+        "path": "docs/README.md",
+        "content": "# Documentation\\nProject docs here",
+        "message": "Update documentation",
+        "branch": "main"
+    }""",
     include_return_description=False,
 )
 async def github_create_or_update_file(
@@ -151,7 +159,20 @@ async def github_create_or_update_file(
 
 @tool(
     name="github_push_files",
-    description="Push multiple files to a GitHub repository in a single commit",
+    description="""Push multiple files to a GitHub repository in a single commit.
+    Example:
+    files = [
+        {
+            "path": "README.md",
+            "content": "# My Project\\nDescription here",
+            "operation": "update"
+        },
+        {
+            "path": "src/main.py",
+            "content": "print('Hello')",
+            "operation": "create"
+        }
+    ]""",
     include_return_description=False,
 )
 async def github_push_files(
@@ -173,7 +194,17 @@ async def github_search_repositories(query: str, page: int = 1, per_page: int = 
 
 @tool(
     name="github_create_repository",
-    description="Create a new GitHub repository in your account",
+    description="""Create a new GitHub repository in your account.
+    Example: Create a repository with issues and wiki enabled:
+    {
+        "name": "my-repo",
+        "description": "A new repository",
+        "private": false,
+        "auto_init": true,
+        "has_issues": true,
+        "has_wiki": true,
+        "has_downloads": true
+    }""",
     include_return_description=False,
 )
 async def github_create_repository(
@@ -181,10 +212,19 @@ async def github_create_repository(
     description: Optional[str] = None,
     private: Optional[bool] = None,
     auto_init: Optional[bool] = None,
+    has_issues: Optional[bool] = True,
+    has_wiki: Optional[bool] = True,
+    has_downloads: Optional[bool] = True,
 ):
     github = get_github_api()
     options = CreateRepositoryOptions(
-        name=name, description=description, private=private, auto_init=auto_init
+        name=name,
+        description=description,
+        private=private,
+        auto_init=auto_init,
+        has_issues=has_issues,
+        has_wiki=has_wiki,
+        has_downloads=has_downloads,
     )
     return await github.create_repository(options)
 
@@ -359,7 +399,14 @@ async def github_get_pull_request(
 
 @tool(
     name="github_merge_pull_request",
-    description="Merge a pull request with specified strategy",
+    description="""Merge a pull request with specified strategy.
+    Example:
+    {
+        "pull_number": 1,
+        "commit_title": "Merge feature branch",
+        "commit_message": "Implementing new feature",
+        "merge_method": "squash"  # or "merge" or "rebase"
+    }""",
     include_return_description=False,
 )
 async def github_merge_pull_request(
@@ -368,7 +415,7 @@ async def github_merge_pull_request(
     pull_number: int,
     commit_title: Optional[str] = None,
     commit_message: Optional[str] = None,
-    merge_method: Optional[str] = "merge",  # merge, squash, or rebase
+    merge_method: str = "merge",  # merge, squash, or rebase
 ):
     github = get_github_api()
     return github.merge_pull_request(
@@ -510,7 +557,13 @@ async def github_list_labels(
 
 @tool(
     name="github_create_label",
-    description="Create a new label in a GitHub repository",
+    description="""Create a new label in a GitHub repository.
+    Example:
+    {
+        "name": "bug",
+        "color": "d73a4a",  # hex color without #
+        "description": "Something isn't working"
+    }""",
     include_return_description=False,
 )
 async def github_create_label(
@@ -526,7 +579,17 @@ async def github_create_label(
 
 @tool(
     name="github_list_directory_contents",
-    description="List contents of a directory in a GitHub repository",
+    description="""List contents of a directory in a GitHub repository.
+    Returns decoded content for each file.
+    Example response:
+    [
+        {
+            "path": "src/main.py",
+            "type": "file",
+            "size": 123,
+            "decoded_content": "print('Hello')"
+        }
+    ]""",
     include_return_description=False,
 )
 async def github_list_directory_contents(
@@ -678,6 +741,26 @@ async def github_get_repository_permissions(
     return await github.get_repository_permissions(owner, repo, username)
 
 
+@tool(
+    name="github_get_default_branch_sha",
+    description="Get the SHA of the default branch's HEAD commit",
+    include_return_description=False,
+)
+async def github_get_default_branch_sha(owner: str, repo: str):
+    github = get_github_api()
+    return await github.get_default_branch_sha(owner, repo)
+
+
+@tool(
+    name="github_get_branch",
+    description="Get a specific branch and its HEAD commit SHA",
+    include_return_description=False,
+)
+async def github_get_branch(owner: str, repo: str, branch: str):
+    github = get_github_api()
+    return await github.get_branch(owner, repo, branch)
+
+
 github_toolkit = Toolkit.create_toolkit(
     id="github_toolkit",
     tools=[
@@ -721,6 +804,8 @@ github_toolkit = Toolkit.create_toolkit(
         github_add_collaborator,
         github_remove_collaborator,
         github_get_repository_permissions,
+        github_get_default_branch_sha,
+        github_get_branch,
     ],
     auth_key=AUTH_KEY,
     requires_config=True,

@@ -13,9 +13,10 @@ def get_tavily_api() -> TavilyAPI:
     """Get Tavily API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        api_key = flow.context.get("auth", {}).get("tavily_api_key")
-        if api_key:
-            return TavilyAPI(api_key=api_key)
+        auth_key = flow.context.get("auth", {})
+        if auth_key:
+            auth = TavilyAuthConfig.model_validate(auth_key)
+            return TavilyAPI(api_key=auth.api_key)
     return TavilyAPI()
 
 

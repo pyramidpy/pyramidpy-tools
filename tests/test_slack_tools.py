@@ -77,13 +77,13 @@ class TestSlackAPI:
         with patch("pyramidpy_tools.slack.tools.get_flow") as mock_get_flow:
             mock_get_flow.return_value = None
 
-            with pytest.raises(AttributeError):
+            with pytest.raises(ValueError):
                 get_slack_api()
 
     def test_get_slack_api_error_handling(self):
         with patch("pyramidpy_tools.slack.tools.get_flow") as mock_get_flow:
             mock_get_flow.return_value = None
-            with pytest.raises(AttributeError):
+            with pytest.raises(ValueError):
                 get_slack_api()
 
 

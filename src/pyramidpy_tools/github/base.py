@@ -6,6 +6,7 @@ from github import Github, GithubObject, Auth
 from github.ContentFile import ContentFile
 from github.GithubException import GithubException
 from github.Repository import Repository
+from github import InputGitTreeElement
 
 from .schemas import (
     CreateBranchOptions,
@@ -110,16 +111,54 @@ class GitHubAPI:
         committer: Optional[GitHubAuthor] = None,
         author: Optional[GitHubAuthor] = None,
     ):
+        """Create or update a file in a repository.
+        If updating an existing file and sha is not provided, it will be fetched automatically.
+        
+        Args:
+            content: The actual file content as a string (will be base64 encoded internally)
+        """
         repository = await self._get_repo(owner, repo)
-        encoded_content = base64.b64encode(content.encode()).decode()
+        
+        # Handle base64 encoding internally
+        if not isinstance(content, bytes):
+            content = content.encode('utf-8')
+        encoded_content = base64.b64encode(content).decode()
 
-        return await self._run_sync(
-            repository.update_file if sha else repository.create_file,
-            path=path,
-            message=message,
-            content=encoded_content,
-            branch=branch,
-        )
+        # If no SHA provided, try to get it (for updates)
+        if sha is None:
+            try:
+                file_content = await self._run_sync(
+                    repository.get_contents,
+                    path=path,
+                    ref=branch
+                )
+                sha = file_content.sha if isinstance(file_content, ContentFile) else None
+            except GithubException as e:
+                if e.status != 404:  # If error is not "file not found"
+                    raise
+                sha = None  # File doesn't exist, creating new file
+
+        if sha:
+            return await self._run_sync(
+                repository.update_file,
+                path=path,
+                message=message,
+                content=encoded_content,
+                sha=sha,
+                branch=branch,
+                committer=to_github_optional(committer),
+                author=to_github_optional(author),
+            )
+        else:
+            return await self._run_sync(
+                repository.create_file,
+                path=path,
+                message=message,
+                content=encoded_content,
+                branch=branch,
+                committer=to_github_optional(committer),
+                author=to_github_optional(author),
+            )
 
     async def push_files(
         self,
@@ -129,6 +168,11 @@ class GitHubAPI:
         files: List[FileOperation],
         message: str,
     ):
+        """Push multiple files in a single commit.
+        
+        Args:
+            files: List of FileOperation objects with content in plain text (will be encoded internally)
+        """
         repository = await self._get_repo(owner, repo)
 
         # Get the current commit SHA
@@ -139,28 +183,39 @@ class GitHubAPI:
         tree_elements = []
         for file in files:
             if file.operation == "create" or file.operation == "update":
+                # Handle base64 encoding internally
+                if not isinstance(file.content, bytes):
+                    content = file.content.encode('utf-8')
+                else:
+                    content = file.content
+                
                 blob = await self._run_sync(
-                    repository.create_git_blob, content=file.content, encoding="utf-8"
+                    repository.create_git_blob,
+                    content=content.decode('utf-8') if isinstance(content, bytes) else content,
+                    encoding="utf-8"
                 )
-                tree_elements.append(
-                    {
-                        "path": file.path,
-                        "mode": "100644",
-                        "type": "blob",
-                        "sha": blob.sha,
-                    }
+                
+                element = InputGitTreeElement(
+                    path=file.path,
+                    mode="100644",
+                    type="blob",
+                    sha=blob.sha
                 )
+                tree_elements.append(element)
 
         new_tree = await self._run_sync(
             repository.create_git_tree, tree_elements, base_tree
         )
+
+        # Get the parent commit
+        parent_commit = await self._run_sync(repository.get_git_commit, ref.object.sha)
 
         # Create commit
         commit = await self._run_sync(
             repository.create_git_commit,
             message=message,
             tree=new_tree,
-            parents=[ref.object],
+            parents=[parent_commit]
         )
 
         # Update reference
@@ -183,7 +238,7 @@ class GitHubAPI:
             name=options.name,
             description=to_github_optional(options.description),
             private=options.private,
-            has_issues=to_github_optional(False),
+            has_issues=to_github_optional(True),
             has_wiki=to_github_optional(False),
             has_downloads=to_github_optional(False),
             auto_init=to_github_optional(options.auto_init),
@@ -475,12 +530,39 @@ class GitHubAPI:
     async def list_directory_contents(
         self, owner: str, repo: str, path: str, branch: Optional[str] = None
     ):
-        """List contents of a directory in a repository."""
+        """List contents of a directory in a repository.
+        Returns the contents with decoded content for files.
+        
+        Returns:
+            List of dictionaries containing file information and decoded content
+        """
         repository = await self._get_repo(owner, repo)
         contents = await self._run_sync(
             repository.get_contents, path, ref=to_github_optional(branch)
         )
-        return contents if isinstance(contents, list) else [contents]
+        
+        result = []
+        contents_list = contents if isinstance(contents, list) else [contents]
+        
+        for content in contents_list:
+            file_info = {
+                "path": content.path,
+                "type": content.type,
+                "size": content.size,
+                "sha": content.sha,
+                "url": content.url,
+                "decoded_content": None
+            }
+            
+            if isinstance(content, ContentFile) and content.content:
+                try:
+                    file_info["decoded_content"] = base64.b64decode(content.content).decode('utf-8')
+                except:
+                    file_info["decoded_content"] = None  # For binary files
+            
+            result.append(file_info)
+            
+        return result
 
     async def delete_file(
         self,

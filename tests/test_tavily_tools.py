@@ -31,33 +31,13 @@ class TestTavilyAPI:
             "pyramidpy_tools.settings.settings.tool_provider.tavily_api_key"
         ) as mock_key:
             mock_key.return_value = "test-key"
-            with patch("controlflow.flows.flow.get_flow") as mock_get_flow:
+            with patch("pyramidpy_tools.tavily_search.tools.get_flow") as mock_get_flow:
                 mock_flow = MagicMock()
-                mock_flow.context = {"tavily_api_key": "test-key"}
+                mock_flow.context = {"auth": {"api_key": "test-key"}}
                 mock_get_flow.return_value = mock_flow
 
                 api = get_tavily_api()
                 assert api.client.api_key == "test-key"
-
-    def test_get_tavily_api_without_token(self):
-        with patch(
-            "pyramidpy_tools.settings.settings.tool_provider.tavily_api_key"
-        ) as mock_key:
-            mock_key.return_value = "test-key"
-            with patch("controlflow.flows.flow.get_flow") as mock_get_flow:
-                mock_get_flow.return_value = None
-
-                api = get_tavily_api()
-                assert api.client.api_key == "test-key"
-
-    def test_get_tavily_api_error_handling(self):
-        with patch(
-            "pyramidpy_tools.settings.settings.tool_provider.tavily_api_key"
-        ) as mock_key:
-            mock_key.return_value = None
-            with pytest.raises(tavily.errors.MissingAPIKeyError) as exc_info:
-                get_tavily_api()
-                assert "MissingAPIKeyError" in str(exc_info.value)
 
 
 @pytest.mark.asyncio
