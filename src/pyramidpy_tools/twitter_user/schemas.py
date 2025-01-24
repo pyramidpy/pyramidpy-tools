@@ -51,16 +51,6 @@ class TwitterUserAuth(BaseModel):
     email: str = Field("", description="The email, not as reliable as (cto,token,twid)")
 
 
-class Tweet(BaseModel):
-    """Tweet data model"""
-
-    id: int
-    text: str
-    created_at: datetime
-    author_id: str
-    conversation_id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    referenced_tweets: Optional[list] = None
 
 
 class TimelineRequest(BaseModel):
@@ -100,3 +90,69 @@ class ScheduleTweetRequest(BaseModel):
 
     text: str
     scheduled_time: datetime
+
+
+class Tweet(BaseModel):
+    """Tweet data model responses"""
+
+    url: str
+    twitter_url: str
+    id: str
+    text: str
+    retweet_count: int = 0
+    reply_count: int = 0
+    like_count: int = 0
+    quote_count: int = 0
+    created_at: str
+    bookmark_count: int = 0
+    is_retweet: bool = False
+    is_quote: bool = False
+    possibly_sensitive: bool = False
+    followers_count: Optional[int] = None
+    author_id: str
+    conversation_id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+
+    @classmethod
+    def parse_tweet(cls, entry: dict) -> Optional["Tweet"]:
+        """Parse tweet data from Twitter API entry format"""
+        try:
+            content = entry.get("content", {})
+            item_content = content.get("itemContent", {})
+
+            if item_content.get("itemType") != "TimelineTweet":
+                return None
+
+            tweet_data = item_content.get("tweet_results", {}).get("result", {})
+            legacy = tweet_data.get("legacy", {})
+            user_data = (
+                tweet_data.get("core", {})
+                .get("user_results", {})
+                .get("result", {})
+                .get("legacy", {})
+            )
+
+            if not legacy:
+                return None
+
+            tweet_id = legacy.get("id_str", "")
+            screen_name = user_data.get("screen_name", "user")
+
+            return cls(
+                url=f"https://x.com/{screen_name}/status/{tweet_id}",
+                twitter_url=f"https://twitter.com/{screen_name}/status/{tweet_id}",
+                id=tweet_id,
+                text=legacy.get("full_text", ""),
+                retweet_count=legacy.get("retweet_count", 0),
+                reply_count=legacy.get("reply_count", 0),
+                like_count=legacy.get("favorite_count", 0),
+                quote_count=legacy.get("quote_count", 0),
+                created_at=legacy.get("created_at", ""),
+                bookmark_count=legacy.get("bookmark_count", 0),
+                is_retweet=legacy.get("retweeted", False),
+                is_quote=bool(legacy.get("is_quote_status", False)),
+                possibly_sensitive=legacy.get("possibly_sensitive", False),
+                followers_count=user_data.get("followers_count"),
+            )
+        except Exception:
+            return None

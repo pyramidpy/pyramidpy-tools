@@ -117,7 +117,7 @@ class TestDexScreenerAPI:
     async def test_search_pairs_error_handling(self, mock_response):
         with patch("httpx.get") as mock_get:
             # Test HTTP error
-            mock_response.ok = False
+            mock_response.is_success = False
             mock_response.status_code = 404
             mock_get.return_value = mock_response
 
@@ -156,7 +156,7 @@ class TestDexScreenerAPI:
     async def test_get_pair_error_handling(self, mock_response):
         with patch("httpx.get") as mock_get:
             # Test pair not found
-            mock_response.ok = True
+            mock_response.is_success = True
             mock_response.json.return_value = {"pair": None}
             mock_get.return_value = mock_response
 
@@ -168,7 +168,7 @@ class TestDexScreenerAPI:
             assert result.error == "Pair not found"
 
             # Test HTTP error
-            mock_response.ok = False
+            mock_response.is_success = False
             mock_response.status_code = 500
             mock_get.return_value = mock_response
 

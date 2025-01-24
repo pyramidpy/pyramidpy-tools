@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional
 from datetime import timezone
 
 from twitter.account import Account
+from twitter.search import Search
 from twitter.scraper import Scraper
 
 from pyramidpy_tools.settings import settings
@@ -32,6 +33,7 @@ class TwitterUserAPI:
         )
         self.account = self._get_account()
         self.scraper = self._get_scraper()
+        self.search = self._get_search()
 
     def _get_account(self) -> Account:
         """Get authenticated Twitter account instance"""
@@ -48,6 +50,15 @@ class TwitterUserAPI:
             return Account(username=self.auth.username, password=self.auth.password)
 
         raise ValueError("Invalid Twitter credentials")
+
+    def _get_search(self) -> Search:
+        """Get authenticated Twitter search instance"""
+        return Search(
+            email=self.auth.email,
+            username=self.auth.username,
+            password=self.auth.password,
+            session=self.account.session,
+        )
 
     def _get_scraper(self) -> Scraper:
         """Get authenticated Twitter scraper instance"""
@@ -95,6 +106,12 @@ class TwitterUserAPI:
     def unschedule_tweet(self, request: TweetActionRequest) -> Dict[str, Any]:
         """Cancel a scheduled tweet"""
         return self.account.unschedule_tweet(request.tweet_id)
+
+    def search_tweets(
+        self, queries: List[Dict[str, Any]], limit: int = 10
+    ) -> List[Dict[str, Any]]:
+        """Search for tweets"""
+        return self.search.run(limit=limit, queries=queries)
 
 
 class TweepyTwitterApi:

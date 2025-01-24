@@ -163,3 +163,32 @@ class ApifyAPI:
 
         except Exception as e:
             raise ApifyError(f"Error running Google search: {str(e)}")
+
+    def search_twitter(
+        self,
+        search_terms: Optional[List[str]] = None,
+        twitter_handles: Optional[List[str]] = None,
+        start_urls: Optional[List[str]] = None,
+        sort: str = "Latest",
+        max_items: int = 20,
+    ) -> List[Dict[str, Any]]:
+        """Search Twitter using Apify's Twitter Scraper"""
+        apify = ApifyWrapper(apify_api_token=self.api_key)
+
+        run_input = {
+            "maxItems": max_items,
+            "sort": sort,
+        }
+        if search_terms:
+            run_input["searchTerms"] = search_terms
+        if twitter_handles:
+            run_input["twitterHandles"] = twitter_handles
+        if start_urls:
+            run_input["startUrls"] = start_urls
+
+        loader = apify.call_actor(
+            actor_id="nfp1fpt5gUlBwPcor",
+            run_input=run_input,
+            dataset_mapping_function=lambda item: item,
+        )
+        return loader.load()

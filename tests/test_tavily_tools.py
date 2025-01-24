@@ -1,5 +1,4 @@
 from unittest.mock import AsyncMock, MagicMock, patch
-import tavily
 import pytest
 from controlflow.tools.tools import Tool
 

@@ -12,7 +12,7 @@ class DexScreenerAPI:
         try:
             url = f"{self.base_url}/dex/search?q={search_query}"
             response = httpx.get(url, timeout=30)
-            if not response.ok:
+            if not response.is_success:
                 return DexScreenerResult(
                     error=f"HTTP error {response.status_code}", success=False
                 )
@@ -28,7 +28,7 @@ class DexScreenerAPI:
         try:
             url = f"{self.base_url}/dex/pairs/{chain_id}/{pair_address}"
             response = httpx.get(url, timeout=30)
-            if not response.ok:
+            if not response.is_success:
                 return DexScreenerResult(
                     error=f"HTTP error {response.status_code}", success=False
                 )

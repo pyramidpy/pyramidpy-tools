@@ -18,6 +18,7 @@ from .schemas import (
 
 AUTH_KEY = "github_token"
 
+
 def to_github_optional(value: Any) -> Any:
     """Convert None to GithubObject.NotSet for optional parameters."""
     return GithubObject.NotSet if value is None else value

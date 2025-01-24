@@ -70,12 +70,13 @@ GitHubContent = Union[GitHubFileContent, List[GitHubDirectoryContent]]
 
 class FileOperation(BaseModel):
     """A file operation for creating, updating, or deleting files in a repository.
-    
+
     Attributes:
         path: The path to the file in the repository
         content: The content of the file in plain text (will be encoded internally)
         operation: The operation to perform on the file (create, update, or delete)
     """
+
     path: str
     content: str
     operation: Literal["create", "update", "delete"]
