@@ -26,7 +26,6 @@ class TwitterUserAPI:
         self.auth = auth or TwitterUserAuth(
             cto=settings.tool_provider.twitter_cto or "",
             auth_token=settings.tool_provider.twitter_auth_token or "",
-            twid=settings.tool_provider.twitter_twid or "",
             username=settings.tool_provider.twitter_username or "",
             password=settings.tool_provider.twitter_password or "",
             email=settings.tool_provider.twitter_email or "",
@@ -37,12 +36,10 @@ class TwitterUserAPI:
 
     def _get_account(self) -> Account:
         """Get authenticated Twitter account instance"""
-        print(self.auth.model_dump())
-        if self.auth.cto and self.auth.auth_token and self.auth.twid:
+        if self.auth.cto and self.auth.auth_token:
             cookies_dict = {
                 "ct0": self.auth.cto,
                 "auth_token": self.auth.auth_token,
-                "twid": self.auth.twid,
             }
             return Account(cookies=cookies_dict)
 
@@ -62,11 +59,10 @@ class TwitterUserAPI:
 
     def _get_scraper(self) -> Scraper:
         """Get authenticated Twitter scraper instance"""
-        if self.auth.cto and self.auth.auth_token and self.auth.twid:
+        if self.auth.cto and self.auth.auth_token:
             cookies_dict = {
                 "ct0": self.auth.cto,
                 "auth_token": self.auth.auth_token,
-                "twid": self.auth.twid,
             }
             return Scraper(cookies=cookies_dict)
 
@@ -128,11 +124,11 @@ class TweepyTwitterApi:
         self.auth = auth or TweepyAuth(
             bearer_token=settings.tool_provider.twitter_bearer_token,
             consumer_key=settings.tool_provider.twitter_consumer_key,
-            consumer_secret=settings.tool_provider.twitter_consumer_secret,
+            consumer_secret=settings.tool_provider.twitter_consumer_secret_key,
             access_token=settings.tool_provider.twitter_access_token,
             access_token_secret=settings.tool_provider.twitter_access_token_secret,
         )
-
+        # BETA to check
         self.client = tweepy.Client(
             bearer_token=self.auth.bearer_token,
             consumer_key=self.auth.consumer_key,

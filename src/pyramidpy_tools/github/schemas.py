@@ -208,7 +208,7 @@ class GitHubPullRequest(BaseModel):
 class CreateRepositoryOptions(BaseModel):
     name: str
     description: Optional[str] = None
-    private: Optional[bool] = None
+    private: bool = False
     auto_init: Optional[bool] = None
     has_issues: Optional[bool] = True
     has_wiki: Optional[bool] = True

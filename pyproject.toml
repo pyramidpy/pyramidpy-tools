@@ -22,7 +22,7 @@ dependencies = [
     "apify-client>=1.8.1",
     "asgiref>=3.8.1",
     "sqlmodel>=0.0.22",
-    "langchain-community>=0.3.7",
+    "langchain-community>=0.3.15",
     "marvin>=2.3.8",
     "chromadb>=0.5.18",
     "sqlite-s3-query>=0.0.82",
@@ -71,6 +71,19 @@ dependencies = [
     "fastembed>=0.2.7",
     "shortuuid>=1.0.13",
     "pyhumps>=3.8.0",
+    "social-post-api==1.2.4",
+    "langchain-google-genai>=2.0.9",
+    "loguru>=0.7.3",
+    "langchain-together>=0.3.0",
+    "langchain-fireworks>=0.2.6",
+    "jinja2>=3.1.5",
+    "boto3>=1.36.5",
+    "e2b-code-interpreter>=1.0.4",
+    "python-dotenv>=1.0.1",
+    "raggy>=0.2.6",
+    "honcho>=2.0.0",
+    "diskcache>=5.6.3",
+    "litellm>=1.59.8",
 ]
 
 [tool.uv.sources]

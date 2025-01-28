@@ -1,97 +1,130 @@
 """
-E2B tools for sandbox management
+E2B tools for code execution and display
 """
 
-from typing import Dict, List
-from pydantic import BaseModel
+import traceback
+from typing import List
+
+from pydantic import Field
 from controlflow.tools.tools import tool
+from controlflow.flows.flow import get_flow
+from e2b_code_interpreter import Sandbox
+from loguru import logger
 from pyramidpy_tools.toolkit import Toolkit
+from pyramidpy_tools.utilities.auth import get_auth_from_context
+from pyramidpy_tools.settings import settings
+from .schemas import CodeBlock, CodeResult, E2BConfig
+from .utils import handle_execution_result
 
 
-class E2BAuth(BaseModel):
-    """E2B authentication configuration"""
+AUTH_KEY = "e2b_api_key"
 
-    api_key: str
+
+def get_e2b_api_key():
+    flow = get_flow()
+    auth = get_auth_from_context(flow.context, AUTH_KEY)
+    if auth:
+        return E2BConfig(**auth).api_key
+    else:
+        return settings.tool_provider.e2b_api_key
 
 
 @tool(
-    name="create_sandbox",
-    description="Create a new E2B sandbox environment",
+    name="code_block",
+    description="Display code in a custom component",
+    include_return_description=False,
 )
-async def create_sandbox(template: str = "base") -> Dict[str, str]:
-    """Create a new sandbox environment.
+def code_block(code: str, language: str = "python", **kwargs) -> CodeBlock:
+    """
+    Use this tool to display any code to the user.
 
     Args:
-        template: The template to use for the sandbox (default: "base")
+        code: The code to display
+        language: The programming language of the code (default: python)
+        **kwargs: Additional keyword arguments
 
     Returns:
-        Dict containing sandbox ID and connection info
+        CodeBlock: A formatted code block for display
     """
-    # TODO: Implement actual E2B API call
-    return {"sandbox_id": "test-sandbox-id", "status": "created"}
+    return CodeBlock(code=code, language=language, highlighted_sections=[])
 
 
 @tool(
-    name="close_sandbox",
-    description="Close an existing E2B sandbox environment",
+    name="code_interpreter",
+    description="Execute Python code in a sandboxed environment",
+    include_return_description=False,
 )
-async def close_sandbox(sandbox_id: str) -> Dict[str, str]:
-    """Close a sandbox environment.
+async def code_interpreter(
+    code: str,
+    timeout: int = Field(
+        default=3000, description="Timeout for code execution in milliseconds"
+    ),
+    download_files: List[str] = [],
+    **kwargs,
+) -> CodeResult:
+    """
+    Execute code in a sandboxed jupyter notebook environment.
 
     Args:
-        sandbox_id: ID of the sandbox to close
+        code: The code to execute
+        download_files: List of file paths to download from the sandbox (must be relative to the 'mnt' directory)
+        **kwargs: Additional keyword arguments including context
 
     Returns:
-        Dict containing operation status
+        CodeResult: The result of code execution
+
+    Notes:
+        - If you explicitly create any files, specify them in the download_files list
+        - Use the 'mnt' directory for file paths
+        - Files with long urls will be automatically shown to the user
+        - You do not need to specify the return
     """
-    # TODO: Implement actual E2B API call
-    return {"sandbox_id": sandbox_id, "status": "closed"}
+
+    api_key = get_e2b_api_key()
+
+    try:
+        sandbox = Sandbox(
+            api_key=api_key,
+            timeout=timeout,
+        )
+
+        logger.info(
+            f"\n{'='*50}\n> Running following AI-generated code:\n{code}\n{'='*50}"
+        )
+
+        execution = sandbox.run_code(code)
+
+        if execution.error:
+            return CodeResult(output="", files=[], error=str(execution.error))
+
+        files = []
+        data_sources = []
+        for idx, result in enumerate(execution.results):
+            _files, _data_sources = await handle_execution_result(result)
+            files.extend(_files)
+            data_sources.extend(_data_sources)
+
+        return CodeResult(
+            logs=str(execution.logs),
+            output=str(execution.results),
+            files=files,
+            data_sources=data_sources,
+            error="",
+        )
+    except Exception as e:
+        traceback.print_exc()
+        return CodeResult(output="", files=[], error=str(e))
 
 
-@tool(
-    name="execute_command",
-    description="Execute a command in an E2B sandbox environment",
-)
-async def execute_command(sandbox_id: str, command: str) -> Dict[str, str]:
-    """Execute a command in a sandbox environment.
-
-    Args:
-        sandbox_id: ID of the sandbox to use
-        command: Command to execute
-
-    Returns:
-        Dict containing command output
-    """
-    # TODO: Implement actual E2B API call
-    return {
-        "sandbox_id": sandbox_id,
-        "command": command,
-        "output": f"Executed command: {command}",
-        "status": "success",
-    }
-
-
-@tool(
-    name="list_sandboxes",
-    description="List all active E2B sandbox environments",
-)
-async def list_sandboxes() -> List[Dict[str, str]]:
-    """List all active sandbox environments.
-
-    Returns:
-        List of active sandboxes and their details
-    """
-    # TODO: Implement actual E2B API call
-    return [{"sandbox_id": "test-sandbox-id", "template": "base", "status": "running"}]
-
-
-# Create the E2B toolkit
-e2b_toolkit = Toolkit.create_toolkit(
-    id="e2b_toolkit",
-    name="E2B Toolkit",
-    description="Tools for managing E2B sandbox environments",
-    tools=[create_sandbox, close_sandbox, execute_command, list_sandboxes],
+# Create the toolkits
+code_ix = Toolkit.create_toolkit(
+    id="code_interpreter",
+    name="Code Interpreter",
+    icon="Terminal",
+    description="Tools for executing code in an isolated environment",
+    tools=[code_interpreter, code_block],
+    categories=["code_interpreter"],
     requires_config=True,
-    auth_key="e2b_auth",
-    auth_config_schema=E2BAuth,
+    auth_key=AUTH_KEY,
+    auth_config_schema=E2BConfig,
 )

@@ -5,11 +5,10 @@ from pyramidpy_tools.settings import settings
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_together import Together
+from langchain_community.chat_models import ChatLiteLLM
+
 from controlflow.llm.models import get_model
-
-from pyramidpy_tools.core.logging import get_logger
-
-logger = get_logger()
+from loguru import logger
 
 
 class SupportedProviders(Enum):
@@ -24,7 +23,9 @@ class SupportedProviders(Enum):
 
 class SupportedModels(Enum):
     deepseek_chat = "deepseek/deepseek-chat"
-    claude_3_5_sonnet = "anthropic/claude-3-5-sonnet-20241020"
+    deepseek_reasoner = "deepseek/deepseek-reasoner"
+    claude_3_5_sonnet = "anthropic/claude-3-5-sonnet-20241022"
+    claude_3_opus = "anthropic/claude-3-opus-20240229"
     gemini_1_5_flash = "google/gemini-1.5-flash-latest"
     gpt_4o_mini = "openai/gpt-4o-mini"
     gpt_4o = "openai/gpt-4o"
@@ -43,7 +44,7 @@ def get_llm(model_id: str | None = "openai/gpt-4o-mini"):
 
     anthropic_llm = ChatAnthropic(
         model="claude-3-5-sonnet-20241020",
-        api_key=settings.llm.anthropic_api_key,
+        anthropic_api_key=settings.llm.anthropic_api_key,
     )
 
     gemini_llm = ChatGoogleGenerativeAI(
@@ -51,21 +52,29 @@ def get_llm(model_id: str | None = "openai/gpt-4o-mini"):
         google_api_key=settings.llm.google_api_key,
     )
 
-    together_llm = Together(
-        model="meta-llama/llama-3.1-8b-instruct",
-        together_api_key=settings.llm.together_api_key,
+    if settings.llm.together_api_key:
+        together_llm = Together(
+            model="meta-llama/llama-3.1-8b-instruct",
+            together_api_key=settings.llm.together_api_key,
+        )
+
+    deepseek_reasoner_llm = ChatLiteLLM(
+        model="deepseek/deepseek-reasoner",
+        api_key=settings.llm.deepseek_api_key,
+        api_base="https://api.deepseek.com",
     )
 
     match model_id:
         case "deepseek/deepseek-v3":
-            logger.debug("Using DeepSeek V3", model_id)
             return deep_seek_llm
-        case "anthropic/claude-3-5-sonnet-20241020":
+        case "anthropic/claude-3-5-sonnet-20241022":
             return anthropic_llm
         case "google/gemini-1.5-flash-latest":
             return gemini_llm
         case "meta-llama/llama-3.1-8b-instruct":
             return together_llm
+        case "deepseek/deepseek-reasoner":
+            return deepseek_reasoner_llm
         case _:
             logger.warning(f"Model {model_id} not found, using default model")
             return get_model("openai/gpt-4o-mini")

@@ -1,0 +1,259 @@
+# Creating a New Tool Module in PyramidPy Tools
+
+## Directory Structure
+Create a new module in the `src/pyramidpy_tools/<tool_name>` directory with the following files:
+```
+src/pyramidpy_tools/<tool_name>/
+├── __init__.py
+├── base.py
+├── tools.py
+├── schemas.py
+└── tests/test_<tool_name>.py
+```
+
+## File Contents
+
+### 1. schemas.py
+Define all data models and authentication schemas:
+```python
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict, Any, Literal
+
+# Authentication schema (if required)
+class ToolNameAuth(BaseModel):
+    """Authentication credentials for the tool."""
+    api_key: str
+    # Add other auth fields as needed
+    
+# Input/Output schemas for API methods
+class MethodInputSchema(BaseModel):
+    """Input parameters for a specific method."""
+    field1: str = Field(description="Description of field1")
+    field2: Optional[int] = Field(default=None, description="Description of field2")
+
+class MethodOutputSchema(BaseModel):
+    """Output schema for a specific method."""
+    result: Any
+    metadata: Dict[str, Any]
+```
+
+### 2. base.py
+Implement the core API client:
+```python
+from typing import Optional, List, Dict, Any
+import httpx
+from .schemas import ToolNameAuth, MethodInputSchema, MethodOutputSchema
+
+class ToolNameAPI:
+    """API client for interacting with the tool provider."""
+    
+    def __init__(self, auth: ToolNameAuth):
+        """Initialize the API client with authentication."""
+        self.auth = auth
+        self.base_url = "https://api.example.com/v1"
+        self.client = httpx.AsyncClient()
+        
+    async def _make_request(
+        self, 
+        method: str, 
+        endpoint: str, 
+        params: Optional[Dict] = None,
+        json: Optional[Dict] = None
+    ) -> Dict:
+        """Make HTTP request to the API."""
+        headers = {"Authorization": f"Bearer {self.auth.api_key}"}
+        url = f"{self.base_url}/{endpoint}"
+        
+        response = await self.client.request(
+            method=method,
+            url=url,
+            params=params,
+            json=json,
+            headers=headers
+        )
+        response.raise_for_status()
+        return response.json()
+        
+    async def method_name(self, input_data: MethodInputSchema) -> MethodOutputSchema:
+        """
+        Description of what this method does.
+        
+        Args:
+            input_data: Description of input parameters
+            
+        Returns:
+            MethodOutputSchema: Description of return value
+            
+        Raises:
+            HTTPError: If the API request fails
+        """
+        response = await self._make_request(
+            method="POST",
+            endpoint="endpoint/path",
+            json=input_data.model_dump()
+        )
+        return MethodOutputSchema(**response)
+```
+
+### 3. tools.py
+Define the tool functions that will be exposed to agents:
+```python
+from typing import Optional, List, Dict, Any
+from controlflow.tools.tools import tool
+from pyramidpy_tools import get_auth_from_context
+
+from .base import ToolNameAPI
+from .schemas import ToolNameAuth, MethodInputSchema, MethodOutputSchema
+
+AUTH_KEY = "tool_name_auth"
+
+def get_tool_api() -> ToolNameAPI:
+    """Get an authenticated API client instance."""
+    from controlflow.context import get_flow
+    
+    # Try to get auth from context
+    flow = get_flow()
+    auth_data = get_auth_from_context(flow.context, AUTH_KEY)
+    if auth_data:
+        return ToolNameAPI(ToolNameAuth(**auth_data))
+            
+    # Fallback to settings unless user has specified they will not be added in settings
+    from pyramidpy_tools.settings import settings
+    if settings.tool_provider.tool_name_key:  # Adjust based on your settings
+        return ToolNameAPI(ToolNameAuth(
+            api_key=settings.tool_provider.tool_name_key
+        ))
+        
+    raise ValueError("No authentication found for tool_name")
+
+@tool(
+    name="tool_name_method",
+    description="Description of what this tool does",
+    instructions="Instructions for the agent on how to use this tool"
+)
+async def tool_name_method(
+    param1: str,
+    param2: Optional[int] = None
+) -> Dict[str, Any]:
+    """
+    Implementation of the tool function.
+    
+    Args:
+        param1: Description of param1
+        param2: Description of param2
+        
+    Returns:
+        Dict containing the response data
+    """
+    api = get_tool_api()
+    input_data = MethodInputSchema(
+        field1=param1,
+        field2=param2
+    )
+    result = await api.method_name(input_data)
+    return result.model_dump()
+```
+
+### 4. __init__.py
+Export the public interface:
+```python
+from .tools import *  # Export all tool functions
+from .base import ToolNameAPI
+from .schemas import ToolNameAuth, MethodInputSchema, MethodOutputSchema
+
+__all__ = [
+    'ToolNameAPI',
+    'ToolNameAuth',
+    'MethodInputSchema',
+    'MethodOutputSchema',
+    'tool_name_method'  # List all exported tool functions
+]
+```
+
+### 5. tests/test_tool_name.py
+Create comprehensive tests:
+```python
+import pytest
+from unittest.mock import MagicMock, patch
+from pyramidpy_tools.tool_name.schemas import ToolNameAuth
+from pyramidpy_tools.tool_name.base import ToolNameAPI
+from pyramidpy_tools.tool_name.tools import (
+    get_tool_api,
+    tool_name_method
+)
+
+@pytest.fixture
+def mock_tool_api():
+    with patch("pyramidpy_tools.tool_name.tools.ToolNameAPI") as mock_api_class:
+        mock_api = MagicMock(spec=ToolNameAPI)
+        mock_api_class.return_value = mock_api
+        mock_api.auth = ToolNameAuth(api_key="test-key")
+        yield mock_api
+
+@pytest.mark.asyncio
+async def test_tool_name_method(mock_tool_api):
+    # Mock the API response
+    mock_response = {"result": "success", "metadata": {}}
+    mock_tool_api.method_name.return_value = mock_response
+    
+    with patch("pyramidpy_tools.tool_name.tools.get_tool_api", return_value=mock_tool_api):
+        result = await tool_name_method(param1="test", param2=123)
+        
+        assert result["result"] == "success"
+        mock_tool_api.method_name.assert_called_once()
+        # Add assertions for the expected input parameters
+```
+
+## Implementation Guidelines
+
+1. **Authentication**:
+   - Always implement authentication in `schemas.py`
+   - Support both context-based and settings-based authentication
+   - Use environment variables for sensitive data
+
+2. **API Client**:
+   - Use `httpx.AsyncClient` for HTTP requests
+   - Implement proper error handling and status code checks
+   - Add comprehensive docstrings for all methods
+   - Use type hints consistently
+
+3. **Tool Functions**:
+   - Keep tool functions focused and single-purpose
+   - Provide clear descriptions and instructions
+   - Handle errors gracefully and return meaningful messages
+   - Use proper typing for all parameters and return values
+
+4. **Testing**:
+   - Write tests for all API methods and tool functions
+   - Mock external API calls
+   - Test both success and error cases
+   - Test authentication flows
+   - Test parameter validation
+
+5. **Documentation**:
+   - Add docstrings to all classes and methods
+   - Include usage examples in docstrings
+   - Document all possible exceptions
+   - Add type hints for all functions and methods
+
+## Settings Integration
+
+Add appropriate settings to `settings.py`:
+```python
+class ToolProviderSettings(BaseSettings):
+    tool_name_key: Optional[str] = None
+    # Add other tool-specific settings
+```
+
+## Example Usage Docs
+
+```python
+# Example of how to use the tool
+from pyramidpy_tools.tool_name import tool_name_method
+
+result = await tool_name_method.run({
+    "param1": "example",
+    "param2": 42
+})
+print(result)
+```

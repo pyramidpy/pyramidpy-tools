@@ -4,7 +4,6 @@ from datetime import datetime
 import logging
 from typing import Optional
 
-from database import SessionLocal, TokenData
 from .schema import Token, TokenInsights
 import marvin
 
@@ -170,28 +169,18 @@ class TokenDataFetcher:
 async def run_update_job():
     """Main job to update token data"""
     fetcher = TokenDataFetcher()
-    db = SessionLocal()
 
     # Your list of contract addresses
-    contract_addresses = [
-        "0x7a5a3bd5106c1c49dbe890f103d13cef50fb2c51",  # Example address
-        # Add more addresses
-    ]
+    contract_addresses = []
 
     while True:
         for address in contract_addresses:
             try:
                 token_data = await fetcher.combine_data(address)
                 if token_data:
-                    db_token = TokenData(
-                        contract_address=address, data=token_data.model_dump()
-                    )
-                    db.merge(db_token)
-                    db.commit()
                     logger.info(f"Updated data for {address}")
             except Exception as e:
                 logger.error(f"Error updating {address}: {e}")
-                db.rollback()
 
         await asyncio.sleep(300)  # 5 minutes
 

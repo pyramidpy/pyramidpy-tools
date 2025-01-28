@@ -210,12 +210,12 @@ async def github_search_repositories(query: str, page: int = 1, per_page: int = 
 )
 async def github_create_repository(
     name: str,
-    description: Optional[str] = None,
-    private: Optional[bool] = None,
-    auto_init: Optional[bool] = None,
-    has_issues: Optional[bool] = True,
-    has_wiki: Optional[bool] = True,
-    has_downloads: Optional[bool] = True,
+    description: str = "New repository",
+    private: bool = True,
+    auto_init: bool = False,
+    has_issues: bool = True,
+    has_wiki: bool = True,
+    has_downloads: bool = True,
 ):
     github = get_github_api()
     options = CreateRepositoryOptions(

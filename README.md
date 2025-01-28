@@ -33,14 +33,14 @@ pip install pyramidpy-tools
 ## 🛠️ Quick Start
 
 ```python
-from pyramidpy_tools import PyramidToolkit
+from pyramidpy_tools.tavily.tools import tavily_toolkit, search
 
-# Initialize the toolkit
-toolkit = PyramidToolkit()
 
-# Use specific tools
-tavily_tool = toolkit.get_tool("tavily_search")
-telegram_tool = toolkit.get_tool("telegram")
+# Use specific tools from toolkit
+search = tavily_toolkit.get_tool("tavily_search")
+result = search("What is the weather in Tokyo?")
+# or directly from the tool
+result = search("What is the weather in Tokyo?")
 ```
 
 ## 🔧 Development

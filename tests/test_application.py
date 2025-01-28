@@ -1,193 +1,213 @@
 import json
-from datetime import datetime
-from unittest.mock import MagicMock, patch
-
 import pytest
-from langchain.docstore.document import Document
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 
-from pyramidpy_tools.application.base import (
-    ApplicationStorage,
-    ApplicationConfig,
-    ApplicationMetadata,
-)
-from pyramidpy_tools.vector_store.base import VectorStore
+from pyramidpy_tools.application.base import ApplicationStorage, ApplicationMetadata
+from pyramidpy_tools.vector_store.dbs.chroma import Chroma
+from pyramidpy_tools.vector_store.base import get_vectorstore
+from pyramidpy_tools.settings import Settings, StorageSettings, EmbeddingSettings
 
 
 @pytest.fixture
-def mock_vector_store():
-    with patch("pyramidpy_tools.application.base.VectorStore") as mock_store:
-        mock_instance = MagicMock(spec=VectorStore)
-        mock_store.return_value = mock_instance
-        yield mock_instance
-
-
-@pytest.fixture
-def app_config():
-    return ApplicationConfig(
-        pg_vector_url="postgresql://test:test@localhost:5432/test",
-        openai_api_key="test-key",
-        embedding_dimensions=1536,
+def mock_settings(monkeypatch):
+    settings = Settings()
+    settings.storage = StorageSettings(
+        default_vector_store="chroma", chroma_url="test", chroma_client_type="base"
     )
+    settings.embeddings = EmbeddingSettings(provider="fastembed", dimensions=384)
+    monkeypatch.setattr("pyramidpy_tools.application.base.settings", settings)
+    return settings
 
 
 @pytest.fixture
-def app_storage(app_config, mock_vector_store):
-    return ApplicationStorage(config=app_config)
+def embeddings():
+    return FastEmbedEmbeddings()
 
 
-def test_application_config_from_settings():
-    with patch("pyramidpy_tools.application.base.settings") as mock_settings:
-        mock_settings.storage.postgres_url = "test-pg-url"
-        mock_settings.llm.openai_api_key = "test-openai-key"
+@pytest.fixture
+def app_storage(monkeypatch, embeddings, mock_settings):
+    # Override get_vectorstore to return our test chroma store
+    stores = {}
 
-        config = ApplicationConfig.from_settings()
+    def mock_get_vectorstore(collection_name):
+        if collection_name not in stores:
+            store = Chroma()
+            store.client_type = "base"
+            store.collection_name = collection_name
+            store.dimensions = mock_settings.embeddings.dimensions
+            store.provider = mock_settings.embeddings.provider
+            store.embeddings = embeddings
+            try:
+                store.client.delete_collection(collection_name)
+            except:  # noqa: E722
+                pass
+            store.client.create_collection(collection_name)
+            stores[collection_name] = store
+        return stores[collection_name]
 
-        assert config.pg_vector_url == "test-pg-url"
-        assert config.openai_api_key == "test-openai-key"
-        assert config.embedding_dimensions == 1536
+    monkeypatch.setattr(
+        "pyramidpy_tools.application.base.get_vectorstore", mock_get_vectorstore
+    )
+    storage = ApplicationStorage(app_id="test-app-id")
+
+    yield storage
+
+    # Cleanup all collections after test
+    for store in stores.values():
+        try:
+            store.client.delete_collection(store.collection_name)
+        except:  # noqa: E722
+            pass
 
 
-def test_application_storage_init_missing_config():
-    with pytest.raises(ValueError, match="pg_vector_url must be configured"):
-        ApplicationStorage(ApplicationConfig(openai_api_key="test"))
-
-    with pytest.raises(ValueError, match="openai_api_key must be configured"):
-        ApplicationStorage(ApplicationConfig(pg_vector_url="test"))
-
-
-def test_create_application(app_storage, mock_vector_store):
+def test_create_application(app_storage):
     name = "test-app"
     schema = {"type": "object"}
     purpose = "testing"
 
     app_id = app_storage.create_application(name, schema, purpose)
 
+    # Verify the application was created
     assert isinstance(app_id, str)
-    mock_vector_store.add_documents.assert_called_once()
-    call_args = mock_vector_store.add_documents.call_args
-    assert call_args[0][0] == "applications"
 
-    doc = call_args[0][1][0]
-    assert isinstance(doc, Document)
+    # Query to verify the data was stored correctly
+    store = get_vectorstore("applications")
+    results = store.query(
+        query_texts=[""],  # Empty query as list
+        where={"$and": [{"app_id": {"$eq": app_id}}, {"type": {"$eq": "application"}}]},
+    )
+
+    assert len(results) == 1
+    doc = results[0]
     metadata = json.loads(doc.page_content)
     assert metadata["name"] == name
     assert metadata["schema"] == schema
     assert metadata["purpose"] == purpose
     assert isinstance(metadata["created_at"], str)
     assert isinstance(metadata["updated_at"], str)
+    assert doc.metadata == {"type": "application", "app_id": app_id}
 
 
-def test_get_application(app_storage, mock_vector_store):
-    app_id = "test-id"
-    app_data = {
-        "name": "test-app",
-        "purpose": "testing",
-        "schema": {"type": "object"},
-        "created_at": datetime.now().isoformat(),
-        "updated_at": datetime.now().isoformat(),
-    }
+def test_get_application(app_storage):
+    # First create an application
+    name = "test-app"
+    schema = {"type": "object"}
+    purpose = "testing"
+    app_id = app_storage.create_application(name, schema, purpose)
 
-    mock_vector_store.query.return_value = [Document(page_content=json.dumps(app_data))]
-
+    # Now try to get it
     result = app_storage.get_application(app_id)
 
     assert isinstance(result, ApplicationMetadata)
-    assert result.name == app_data["name"]
-    assert result.purpose == app_data["purpose"]
-    assert result.schema == app_data["schema"]
-    mock_vector_store.query.assert_called_with(
-        "applications", query_text="", where={"app_id": app_id}
-    )
+    assert result.name == name
+    assert result.purpose == purpose
+    assert result.schema == schema
 
 
-def test_get_application_not_found(app_storage, mock_vector_store):
-    mock_vector_store.query.return_value = []
-
+def test_get_application_not_found(app_storage):
     result = app_storage.get_application("non-existent")
-
     assert result is None
 
 
-def test_add_data(app_storage, mock_vector_store):
-    app_id = "test-id"
-    data = {"field": "value"}
+def test_add_data(app_storage):
+    # First create an application
+    app_id = app_storage.create_application("test-app", {"type": "object"}, "testing")
 
+    # Add data to it
+    data = {"field": "value"}
     doc_id = app_storage.add_data(app_id, data)
 
+    # Verify the data was added
     assert isinstance(doc_id, str)
-    mock_vector_store.add_documents.assert_called_once()
-    call_args = mock_vector_store.add_documents.call_args
-    assert call_args[0][0] == f"app_{app_id}"
+    store = get_vectorstore(f"app_{app_id}")
+    results = store.query(
+        query_texts=[""],  # Empty query as list
+        where={"$and": [{"app_id": {"$eq": app_id}}, {"type": {"$eq": "data"}}]},
+    )
 
-    doc = call_args[0][1][0]
-    assert isinstance(doc, Document)
+    assert len(results) == 1
+    doc = results[0]
     assert doc.id == doc_id
     assert json.loads(doc.page_content) == data
     assert doc.metadata == {"type": "data", "app_id": app_id}
 
 
-def test_update_data(app_storage, mock_vector_store):
-    app_id = "test-id"
-    doc_id = "doc-id"
-    data = {"field": "updated"}
+def test_update_data(app_storage):
+    # First create an application and add data
+    app_id = app_storage.create_application("test-app", {"type": "object"}, "testing")
+    data = {"field": "original"}
+    doc_id = app_storage.add_data(app_id, data)
 
-    app_storage.update_data(app_id, doc_id, data)
+    # Update the data
+    updated_data = {"field": "updated"}
+    app_storage.update_data(app_id, doc_id, updated_data)
 
-    mock_vector_store.add_documents.assert_called_once()
-    call_args = mock_vector_store.add_documents.call_args
-    assert call_args[0][0] == f"app_{app_id}"
+    # Verify the update
+    store = get_vectorstore(f"app_{app_id}")
+    results = store.query(
+        query_texts=[""],  # Empty query as list
+        where={"$and": [{"app_id": {"$eq": app_id}}, {"type": {"$eq": "data"}}]},
+    )
 
-    doc = call_args[0][1][0]
+    assert len(results) == 1
+    doc = results[0]
     assert doc.id == doc_id
-    assert json.loads(doc.page_content) == data
+    assert json.loads(doc.page_content) == updated_data
     assert doc.metadata == {"type": "data", "app_id": app_id}
 
 
-def test_search_data(app_storage, mock_vector_store):
-    app_id = "test-id"
-    query = "test query"
-    filters = {"field": "value"}
-    mock_results = [
-        Document(
-            page_content=json.dumps({"data": "1"}), metadata={"type": "data"}, id="doc1"
-        ),
-        Document(
-            page_content=json.dumps({"data": "2"}), metadata={"type": "data"}, id="doc2"
-        ),
-    ]
-    mock_vector_store.query.return_value = mock_results
+def test_search_data(app_storage):
+    # Create application and add test data
+    app_id = app_storage.create_application("test-app", {"type": "object"}, "testing")
+    app_storage.add_data(app_id, {"content": "test document about machine learning"})
+    app_storage.add_data(app_id, {"content": "test document about data science"})
 
-    results = app_storage.search_data(app_id, query, filters, limit=2)
+    # Search the data
+    results = app_storage.search_data(app_id, query_text="machine learning", limit=1)
 
-    assert len(results) == 2
-    mock_vector_store.query.assert_called_with(
-        f"app_{app_id}", query_text=query, n_results=2, where=filters
+    assert len(results) == 1
+    assert "machine learning" in results[0]["content"]["content"]
+    assert results[0]["metadata"]["type"] == "data"
+    assert results[0]["metadata"]["app_id"] == app_id
+
+
+def test_delete_data(app_storage):
+    # Create application and add test data
+    app_id = app_storage.create_application("test-app", {"type": "object"}, "testing")
+    doc_id = app_storage.add_data(app_id, {"field": "value"})
+
+    # Delete the data
+    app_storage.delete_data(app_id, doc_ids=[doc_id])
+
+    # Verify deletion
+    store = get_vectorstore(f"app_{app_id}")
+    results = store.query(
+        query_texts=[""],  # Empty query as list
+        where={"$and": [{"app_id": {"$eq": app_id}}, {"type": {"$eq": "data"}}]},
     )
-
-    for i, result in enumerate(results, 1):
-        assert result["content"] == {"data": str(i)}
-        assert result["metadata"] == {"type": "data"}
-        assert result["id"] == f"doc{i}"
+    assert len(results) == 0
 
 
-def test_delete_data(app_storage, mock_vector_store):
-    app_id = "test-id"
-    doc_ids = ["doc1", "doc2"]
-    filters = {"field": "value"}
+def test_delete_application(app_storage):
+    # Create application and add some data
+    app_id = app_storage.create_application("test-app", {"type": "object"}, "testing")
+    app_storage.add_data(app_id, {"field": "value"})
 
-    app_storage.delete_data(app_id, doc_ids, filters)
-
-    mock_vector_store.delete.assert_called_with(
-        f"app_{app_id}", ids=doc_ids, where=filters
-    )
-
-
-def test_delete_application(app_storage, mock_vector_store):
-    app_id = "test-id"
-
+    # Delete the application
     app_storage.delete_application(app_id)
 
-    mock_vector_store.delete_collection.assert_called_with(f"app_{app_id}")
-    mock_vector_store.delete.assert_called_with(
-        "applications", where={"app_id": app_id}
+    # Verify application metadata is deleted
+    store = get_vectorstore("applications")
+    results = store.query(
+        query_texts=[""],  # Empty query as list
+        where={"$and": [{"app_id": {"$eq": app_id}}]},
     )
+    assert len(results) == 0
+
+    # Verify application data is deleted
+    data_store = get_vectorstore(f"app_{app_id}")
+    results = data_store.query(
+        query_texts=[""],  # Empty query as list
+        where={"$and": [{"app_id": {"$eq": app_id}}]},
+    )
+    assert len(results) == 0

@@ -1,4 +1,4 @@
-from .base import ApplicationStorage, ApplicationConfig, ApplicationMetadata
+from .base import ApplicationStorage, ApplicationMetadata
 from .tools import (
     create_application,
     get_application,
@@ -12,7 +12,6 @@ from .tools import (
 
 __all__ = [
     "ApplicationStorage",
-    "ApplicationConfig",
     "ApplicationMetadata",
     "create_application",
     "get_application",

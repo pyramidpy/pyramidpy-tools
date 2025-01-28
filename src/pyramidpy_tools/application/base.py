@@ -4,7 +4,8 @@ from datetime import datetime
 import uuid
 import json
 from langchain.docstore.document import Document
-from pyramidpy_tools.vector_store.base import VectorStore, VectorStoreConfig
+
+from pyramidpy_tools.vector_store.base import get_vectorstore
 from ..settings import settings
 
 
@@ -23,42 +24,26 @@ class ApplicationMetadata(BaseModel):
         return data
 
 
-class ApplicationConfig(BaseModel):
-    pg_vector_url: str | None = None
-    openai_api_key: str | None = None
-    embedding_dimensions: int = 1536
-
-    @classmethod
-    def from_settings(cls) -> "ApplicationConfig":
-        """Create config from settings"""
-        return cls(
-            pg_vector_url=settings.storage.postgres_url,
-            openai_api_key=settings.llm.openai_api_key,
-            embedding_dimensions=1536,
-        )
-
-
 class ApplicationStorage:
     """Storage for managing applications and their data"""
 
-    def __init__(self, config: Optional[ApplicationConfig] = None):
-        self.config = config or ApplicationConfig.from_settings()
-        if not self.config.pg_vector_url:
-            raise ValueError(
-                "pg_vector_url must be configured in settings or provided directly"
-            )
-        if not self.config.openai_api_key:
-            raise ValueError(
-                "openai_api_key must be configured in settings or provided directly"
-            )
+    app_id: str
 
-        self.vector_store = VectorStore(
-            VectorStoreConfig(
-                pg_vector_url=self.config.pg_vector_url,
-                openai_api_key=self.config.openai_api_key,
-                embedding_dimensions=self.config.embedding_dimensions,
-            )
-        )
+    def __init__(self, app_id: str):
+        self.app_id = app_id
+
+    def _format_where_clause(self, conditions: Dict[str, Any]) -> Dict[str, Any]:
+        """Format where clause based on vector store type"""
+        if settings.storage.default_vector_store == "chroma":
+            # For Chroma, we need at least 2 conditions in an $and clause
+            # If we only have one condition, return it directly
+            if len(conditions) == 1:
+                key, value = next(iter(conditions.items()))
+                return {key: {"$eq": value}}
+            # Otherwise, format as $and with multiple conditions
+            return {"$and": [{k: {"$eq": v}} for k, v in conditions.items()]}
+        # PG Vector style
+        return conditions
 
     def create_application(
         self, name: str, json_schema: Dict[str, Any], purpose: str
@@ -74,12 +59,14 @@ class ApplicationStorage:
         )
 
         # Store application metadata
-        self.vector_store.add_documents(
-            "applications",
+        vector_store = get_vectorstore("applications")
+        doc_id = str(uuid.uuid4())
+        vector_store.add(
             [
                 Document(
                     page_content=json.dumps(metadata.model_dump()),
                     metadata={"type": "application", "app_id": app_id},
+                    id=doc_id,
                 )
             ],
         )
@@ -87,10 +74,13 @@ class ApplicationStorage:
 
     def get_application(self, app_id: str) -> Optional[ApplicationMetadata]:
         """Get application metadata"""
-        results = self.vector_store.query(
-            "applications",
-            query_text="",  # Empty query since we're using filters
-            where={"app_id": app_id},
+        vector_store = get_vectorstore("applications")
+        where_clause = self._format_where_clause(
+            {"app_id": app_id, "type": "application"}
+        )
+        results = vector_store.query(
+            query_texts=[""],  # Empty query since we're using filters
+            where=where_clause,
         )
         if not results:
             return None
@@ -100,8 +90,8 @@ class ApplicationStorage:
     def add_data(self, app_id: str, data: Dict[str, Any]) -> str:
         """Add data to application"""
         doc_id = str(uuid.uuid4())
-        self.vector_store.add_documents(
-            f"app_{app_id}",
+        vector_store = get_vectorstore(f"app_{app_id}")
+        vector_store.add(
             [
                 Document(
                     page_content=json.dumps(data),
@@ -114,8 +104,8 @@ class ApplicationStorage:
 
     def update_data(self, app_id: str, doc_id: str, data: Dict[str, Any]):
         """Update existing data"""
-        self.vector_store.add_documents(
-            f"app_{app_id}",
+        vector_store = get_vectorstore(f"app_{app_id}")
+        vector_store.add(
             [
                 Document(
                     page_content=json.dumps(data),
@@ -133,14 +123,24 @@ class ApplicationStorage:
         limit: int = 10,
     ) -> List[Dict]:
         """Search data using text similarity or filters"""
-        results = self.vector_store.query(
-            f"app_{app_id}", query_text=query_text or "", n_results=limit, where=filters
+        vector_store = get_vectorstore(f"app_{app_id}")
+        conditions = {"app_id": app_id, "type": "data"}
+        if filters:
+            conditions.update(filters)
+
+        where_clause = self._format_where_clause(conditions)
+        results = vector_store.query(
+            query_texts=[query_text] if query_text else [""],
+            n_results=limit,
+            where=where_clause,
         )
 
         return [
             {
                 "id": doc.id,
-                "content": json.loads(doc.page_content),
+                "content": json.loads(doc.page_content)
+                if isinstance(doc.page_content, str)
+                else doc.page_content,
                 "metadata": doc.metadata,
             }
             for doc in results
@@ -148,9 +148,22 @@ class ApplicationStorage:
 
     def delete_data(self, app_id: str, doc_ids: List[str] = None, filters: Dict = None):
         """Delete data from application"""
-        self.vector_store.delete(f"app_{app_id}", ids=doc_ids, where=filters)
+        vector_store = get_vectorstore(f"app_{app_id}")
+        where_clause = None
+        if filters:
+            conditions = {"app_id": app_id, "type": "data"}
+            conditions.update(filters)
+            where_clause = self._format_where_clause(conditions)
+        vector_store.delete(ids=doc_ids, where=where_clause)
 
     def delete_application(self, app_id: str):
         """Delete an application and all its data"""
-        self.vector_store.delete_collection(f"app_{app_id}")
-        self.vector_store.delete("applications", where={"app_id": app_id})
+        # Delete application metadata
+        vector_store = get_vectorstore("applications")
+        where_clause = self._format_where_clause({"app_id": app_id})
+        vector_store.delete(where=where_clause)
+
+        # Delete application data
+        data_store = get_vectorstore(f"app_{app_id}")
+        where_clause = self._format_where_clause({"app_id": app_id})
+        data_store.delete(where=where_clause)

@@ -76,5 +76,5 @@ class WebhookInfo(BaseModel):
     allowed_updates: Optional[List[str]] = None
 
 
-class TelegramAuthConfig(BaseModel):
+class TelegramAuth(BaseModel):
     telegram_bot_token: str = Field(..., description="Telegram bot token")

@@ -1,16 +1,14 @@
 from typing import Dict, List, Optional, Any
 from controlflow.tools.tools import tool
 from pyramidpy_tools.toolkit import Toolkit
-from .base import ApplicationStorage, ApplicationConfig
+from .base import ApplicationStorage
 
 
 @tool(
     name="create_application",
     description="Create a new application with schema definition",
 )
-def create_application(
-    name: str, json_schema: Dict[str, Any], purpose: str, config: Dict
-):
+def create_application(name: str, json_schema: Dict[str, Any], purpose: str):
     """Create a new application with schema
 
     Args:
@@ -19,20 +17,20 @@ def create_application(
         purpose: Purpose/description of the application
         config: Application configuration with pg_vector_url
     """
-    storage = ApplicationStorage(ApplicationConfig(**config))
+    storage = ApplicationStorage(app_id=name)
     app_id = storage.create_application(name, json_schema, purpose)
     return {"app_id": app_id, "message": f"Application {name} created successfully"}
 
 
 @tool(name="get_application", description="Get application metadata")
-def get_application(app_id: str, config: Dict):
+def get_application(app_id: str):
     """Get application metadata
 
     Args:
         app_id: Application ID
         config: Application configuration
     """
-    storage = ApplicationStorage(ApplicationConfig(**config))
+    storage = ApplicationStorage(app_id=app_id)
     app = storage.get_application(app_id)
     if not app:
         return {"error": "Application not found"}
@@ -40,7 +38,7 @@ def get_application(app_id: str, config: Dict):
 
 
 @tool(name="add_data", description="Add data to an application")
-def add_data(app_id: str, data: Dict[str, Any], embeddings: List[float], config: Dict):
+def add_data(app_id: str, data: Dict[str, Any], embeddings: List[float]):
     """Add data to an application
 
     Args:
@@ -49,7 +47,7 @@ def add_data(app_id: str, data: Dict[str, Any], embeddings: List[float], config:
         embeddings: Vector embeddings for the data
         config: Application configuration
     """
-    storage = ApplicationStorage(ApplicationConfig(**config))
+    storage = ApplicationStorage(app_id=app_id)
     doc_id = storage.add_data(app_id, data, embeddings)
     return {"doc_id": doc_id, "message": "Data added successfully"}
 
@@ -60,7 +58,6 @@ def update_data(
     doc_id: str,
     data: Dict[str, Any],
     embeddings: List[float],
-    config: Dict,
 ):
     """Update existing data in an application
 
@@ -71,7 +68,7 @@ def update_data(
         embeddings: Updated vector embeddings
         config: Application configuration
     """
-    storage = ApplicationStorage(ApplicationConfig(**config))
+    storage = ApplicationStorage(app_id=app_id)
     storage.update_data(app_id, doc_id, data, embeddings)
     return {"message": f"Document {doc_id} updated successfully"}
 
@@ -82,7 +79,6 @@ def search_data(
     query_embedding: Optional[List[float]] = None,
     filters: Optional[Dict] = None,
     limit: int = 10,
-    config: Dict = None,
 ):
     """Search data in an application
 
@@ -93,7 +89,7 @@ def search_data(
         limit: Maximum number of results
         config: Application configuration
     """
-    storage = ApplicationStorage(ApplicationConfig(**config))
+    storage = ApplicationStorage(app_id=app_id)
     results = storage.search_data(app_id, query_embedding, filters, limit)
     return results
 
@@ -103,7 +99,6 @@ def delete_data(
     app_id: str,
     doc_ids: Optional[List[str]] = None,
     filters: Optional[Dict] = None,
-    config: Dict = None,
 ):
     """Delete data from an application
 
@@ -113,20 +108,20 @@ def delete_data(
         filters: Optional filters for deletion
         config: Application configuration
     """
-    storage = ApplicationStorage(ApplicationConfig(**config))
+    storage = ApplicationStorage(app_id=app_id)
     storage.delete_data(app_id, doc_ids, filters)
     return {"message": "Data deleted successfully"}
 
 
 @tool(name="delete_application", description="Delete an application and all its data")
-def delete_application(app_id: str, config: Dict):
+def delete_application(app_id: str):
     """Delete an application and all its data
 
     Args:
         app_id: Application ID
         config: Application configuration
     """
-    storage = ApplicationStorage(ApplicationConfig(**config))
+    storage = ApplicationStorage(app_id=app_id)
     storage.delete_application(app_id)
     return {"message": f"Application {app_id} deleted successfully"}
 
@@ -143,6 +138,6 @@ application_toolkit = Toolkit.create_toolkit(
         delete_application,
     ],
     description="Tools for managing applications and their data",
-    requires_config=True,
+    requires_config=False,
     name="Application Toolkit",
 )

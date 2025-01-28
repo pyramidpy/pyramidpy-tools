@@ -74,10 +74,34 @@ async def apify_web_loader(
     collection: str | None = None,
 ):
     apify = get_apify_api()
-    return await apify.web_loader(
+    docs = await apify.web_loader(
         urls=urls,
         max_crawl_pages=max_crawl_pages,
-        collection=collection,
+    )
+    if collection:
+        pass
+    return docs
+
+
+@tool(
+    name="apify_search_tweets",
+    description="Search tweets using Apify's Twitter Search Scraper",
+    include_return_description=False,
+)
+async def apify_search_tweets(
+    search_terms: Optional[List[str]] = None,
+    twitter_handles: Optional[List[str]] = None,
+    start_urls: Optional[List[str]] = None,
+    sort: str = "Latest",
+    max_items: int = 20,
+):
+    apify = get_apify_api()
+    return await apify.search_twitter(
+        search_terms=search_terms,
+        twitter_handles=twitter_handles,
+        start_urls=start_urls,
+        sort=sort,
+        max_items=max_items,
     )
 
 
@@ -87,6 +111,7 @@ apify_toolkit = Toolkit.create_toolkit(
         apify_web_scraper,
         apify_google_search,
         apify_web_loader,
+        apify_search_tweets,
     ],
     auth_config_schema=ApiKeyAuthConfig,
     auth_key=AUTH_PREFIX,

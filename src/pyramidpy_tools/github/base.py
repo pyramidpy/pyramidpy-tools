@@ -558,7 +558,7 @@ class GitHubAPI:
                     file_info["decoded_content"] = base64.b64decode(
                         content.content
                     ).decode("utf-8")
-                except:
+                except:  # noqa: E722
                     file_info["decoded_content"] = None  # For binary files
 
             result.append(file_info)

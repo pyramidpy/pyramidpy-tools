@@ -6,6 +6,7 @@ from langchain_core.documents import Document
 from langchain_community.utilities import ApifyWrapper
 from pyramidpy_tools.settings import settings
 
+
 from .schemas import (
     GoogleSearchResponse,
     WebScraperResponse,
@@ -33,7 +34,6 @@ class ApifyAPI:
     def web_loader(
         self,
         start_urls: list[str],
-        collection: str | None = None,
         max_crawl_pages: int = 2,
     ) -> list[Document]:
         """Load the web for information relevant to the query."""

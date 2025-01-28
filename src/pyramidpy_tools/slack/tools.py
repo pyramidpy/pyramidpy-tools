@@ -4,22 +4,22 @@ from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
 
 from pyramidpy_tools.toolkit import Toolkit
+from pyramidpy_tools.utilities.auth import get_auth_from_context
 
 from .base import SlackAPI
 from .schemas import SlackAuthConfigSchema
+
+AUTH_KEY = "slack_auth"
 
 
 def get_slack_api() -> SlackAPI:
     """Get Slack API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        print(flow.context)
-        auth = flow.context.get("auth", {})
+        auth = get_auth_from_context(flow.context, AUTH_KEY)
         if auth:
             try:
-                print(auth)
                 auth = SlackAuthConfigSchema(**auth)
-                print(auth)
                 return SlackAPI(token=auth.slack_api_token)
             except Exception as e:
                 raise ValueError("Slack API token not configured") from e

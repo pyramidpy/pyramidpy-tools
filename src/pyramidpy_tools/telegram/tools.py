@@ -4,26 +4,31 @@ from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
 
 from pyramidpy_tools.toolkit import Toolkit
-
+from pyramidpy_tools.utilities.auth import get_auth_from_context
+from pyramidpy_tools.settings import settings
 from .base import TelegramAPI
 from .schemas import (
-    TelegramAuthConfig,
+    TelegramAuth,
     SendDocumentRequest,
     SendMessageRequest,
     SendPhotoRequest,
 )
+
+AUTH_KEY = "telegram_bot_token"
 
 
 def get_telegram_api() -> TelegramAPI:
     """Get Telegram API instance with token from context if available"""
     flow = get_flow()
     if flow and flow.context:
-        auth = flow.context.get("auth", {})
+        auth = get_auth_from_context(flow.context, AUTH_KEY)
         if auth:
-            auth = TelegramAuthConfig(**auth)
+            auth = TelegramAuth(**auth)
             if auth.telegram_bot_token:
                 return TelegramAPI(token=auth.telegram_bot_token)
-    return TelegramAPI()
+        if settings.tool_provider.telegram_bot_token:
+            return TelegramAPI(token=settings.tool_provider.telegram_bot_token)
+    raise ValueError("Telegram bot token not configured")
 
 
 @tool(
@@ -157,9 +162,9 @@ telegram_toolkit = Toolkit.create_toolkit(
         telegram_set_webhook,
         telegram_delete_webhook,
     ],
-    auth_key="telegram_bot_token",
+    auth_key=AUTH_KEY,
     name="Telegram Toolkit",
-    auth_config_schema=TelegramAuthConfig,
+    auth_config_schema=TelegramAuth,
     requires_config=True,
     is_app_default=False,
     description="Tools for interacting with Telegram Bot API",

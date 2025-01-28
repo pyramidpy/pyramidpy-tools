@@ -160,3 +160,12 @@ class StorageS3Client:
                     Bucket=self.bucket_name, Key=object_name, UploadId=upload_id
                 )
             return False
+
+    def generate_public_url(self, bytes_object: bytes, file_name: str):
+        try:
+            self.s3_client.put_object(
+                Bucket=self.bucket_name, Key=file_name, Body=bytes_object
+            )
+            return True
+        except ClientError:
+            return False
