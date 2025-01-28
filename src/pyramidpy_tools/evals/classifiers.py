@@ -1,5 +1,6 @@
-from autoevals import LLMClassifier
 from enum import Enum
+
+from autoevals import LLMClassifier
 
 
 class ContentRisk(Enum):

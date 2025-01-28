@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Sequence, Awaitable, TypeVar
-from langchain.docstore.document import Document
+from typing import Awaitable, Optional, Sequence, TypeVar
+
 import anyio
 from anyio import create_task_group
+from langchain.docstore.document import Document
 
 T = TypeVar("T")
 

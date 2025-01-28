@@ -1,6 +1,7 @@
 import httpx
-from pyramidpy_tools.settings import settings
 import humps
+
+from pyramidpy_tools.settings import settings
 
 
 class TursoClient:

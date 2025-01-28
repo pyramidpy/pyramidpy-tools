@@ -1,11 +1,12 @@
 import pytest
+
 from pyramidpy_tools.e2b.tools import (
-    e2b_toolkit,
-    create_sandbox,
+    E2BAuth,
     close_sandbox,
+    create_sandbox,
+    e2b_toolkit,
     execute_command,
     list_sandboxes,
-    E2BAuth,
 )
 
 

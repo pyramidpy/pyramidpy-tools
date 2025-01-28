@@ -1,9 +1,10 @@
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
+
 from .base import AyrshareAPI
 from .schemas import (
-    PostOptions,
     DeletePostOptions,
     HistoryOptions,
+    PostOptions,
 )
 
 

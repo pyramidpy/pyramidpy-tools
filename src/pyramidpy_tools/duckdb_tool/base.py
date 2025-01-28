@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional
 
 import duckdb
+
 from pyramidpy_tools.settings import settings
 
 from .schemas import QueryResult, S3Config, TableSchema

@@ -1,6 +1,7 @@
 from typing import List
+
 from chromadb import Documents, EmbeddingFunction, Embeddings
-from langchain_community.embeddings import OpenAIEmbeddings, FastEmbedEmbeddings
+from langchain_community.embeddings import FastEmbedEmbeddings, OpenAIEmbeddings
 
 from pyramidpy_tools.settings import settings
 

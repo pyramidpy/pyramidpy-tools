@@ -1,13 +1,15 @@
+import asyncio
 import logging
-from typing import Callable, Dict, Coroutine, Any
-from fastapi import FastAPI, Request, HTTPException
+from typing import Any, Callable, Coroutine, Dict
+
+import uvicorn
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import Message, Update, WebhookInfo
-import uvicorn
+from fastapi import FastAPI, HTTPException, Request
+
 from pyramidpy_tools.settings import settings
-import asyncio
 
 logger = logging.getLogger(__name__)
 

@@ -1,11 +1,11 @@
-from typing import Any, Dict, List, Optional
 import uuid
+from typing import Any, Dict, List, Optional
 
 from apify_client import ApifyClient
-from langchain_core.documents import Document
 from langchain_community.utilities import ApifyWrapper
-from pyramidpy_tools.settings import settings
+from langchain_core.documents import Document
 
+from pyramidpy_tools.settings import settings
 
 from .schemas import (
     GoogleSearchResponse,

@@ -5,7 +5,7 @@ Utility functions for E2B code execution
 import base64
 import io
 import uuid
-from typing import Tuple, List, Dict, Any
+from typing import Any, Dict, List, Tuple
 
 import rich
 from e2b_code_interpreter import Result

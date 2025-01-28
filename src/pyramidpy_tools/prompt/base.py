@@ -1,11 +1,12 @@
-from jinja2 import DictLoader, Environment
-from datetime import datetime
-import random
-import math
 import json
+import math
+import random
 import re
 import uuid
-from typing import Dict, Any
+from datetime import datetime
+from typing import Any, Dict
+
+from jinja2 import DictLoader, Environment
 
 # F-string pattern to detect {var} or {var:format}
 F_STRING_PATTERN = r"\{([^{}]+?)\}"

@@ -2,6 +2,7 @@ from typing import Any, Dict
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
+
 from pyramidpy_tools.discord_bot.base import DiscordAPI
 from pyramidpy_tools.discord_bot.schemas import (
     AddReactionRequest,

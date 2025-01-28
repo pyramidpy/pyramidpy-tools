@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict
+from typing import Dict, List, Optional
 
 from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool

@@ -5,17 +5,18 @@ E2B tools for code execution and display
 import traceback
 from typing import List
 
-from pydantic import Field
-from controlflow.tools.tools import tool
 from controlflow.flows.flow import get_flow
+from controlflow.tools.tools import tool
 from e2b_code_interpreter import Sandbox
 from loguru import logger
+from pydantic import Field
+
+from pyramidpy_tools.settings import settings
 from pyramidpy_tools.toolkit import Toolkit
 from pyramidpy_tools.utilities.auth import get_auth_from_context
-from pyramidpy_tools.settings import settings
+
 from .schemas import CodeBlock, CodeResult, E2BConfig
 from .utils import handle_execution_result
-
 
 AUTH_KEY = "e2b_api_key"
 

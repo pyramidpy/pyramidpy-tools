@@ -3,8 +3,8 @@ from typing import List, Optional
 from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
 
-from pyramidpy_tools.toolkit import Toolkit
 from pyramidpy_tools.settings import settings
+from pyramidpy_tools.toolkit import Toolkit
 
 from .base import JinaAPI
 

@@ -1,8 +1,9 @@
 import logging
 from datetime import datetime
-from typing import Dict, List, Optional, Any
-from .schemas import TimelineRequest, TweetRequest
+from typing import Any, Dict, List, Optional
+
 from ..application.base import ApplicationStorage
+from .schemas import TimelineRequest, TweetRequest
 
 logger = logging.getLogger(__name__)
 

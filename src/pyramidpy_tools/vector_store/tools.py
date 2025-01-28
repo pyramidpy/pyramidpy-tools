@@ -1,7 +1,10 @@
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
 from controlflow.tools.tools import tool
-from pyramidpy_tools.toolkit import Toolkit
 from langchain.docstore.document import Document
+
+from pyramidpy_tools.toolkit import Toolkit
+
 from .base import get_vectorstore
 
 

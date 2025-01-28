@@ -7,12 +7,13 @@ from chromadb.api.models.Collection import Document as ChromaDocument
 from chromadb.api.types import Embedding, OneOrMany, PyEmbedding, QueryResult
 from chromadb.utils.batch_utils import create_batches
 from langchain_core.documents import Document
-from pyramidpy_tools.vector_store.dbs.base import BaseVectorStore
+
 from pyramidpy_tools.settings import ChromaClientType, settings
 from pyramidpy_tools.utilities.embeddings import (
-    create_embeddings,
     OpenAIEmbeddingFunction,
+    create_embeddings,
 )
+from pyramidpy_tools.vector_store.dbs.base import BaseVectorStore
 
 
 def get_client(client_type: ChromaClientType) -> ClientAPI:

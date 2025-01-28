@@ -6,16 +6,18 @@ Simple strategy flow example that integrates large language model (LLM) generati
 4. Posts the tweet with the TwitterUserAPI (or TweepyTwitterApi).
 """
 
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 import controlflow as cf
-from pyramidpy_tools.twitter_user.base import (
-    TwitterUserAPI,
-    TweetRequest,
-    TimelineRequest,
-)
+
 from pyramidpy_tools.core.llm import get_llm
-from pyramidpy_tools.settings import settings
 from pyramidpy_tools.prompt.base import render_template
+from pyramidpy_tools.settings import settings
+from pyramidpy_tools.twitter_user.base import (
+    TimelineRequest,
+    TweetRequest,
+    TwitterUserAPI,
+)
 
 ###############################################################################
 # Simple analysis function

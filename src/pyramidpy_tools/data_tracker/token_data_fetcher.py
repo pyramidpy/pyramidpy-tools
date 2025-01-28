@@ -1,11 +1,12 @@
 import asyncio
-import aiohttp
-from datetime import datetime
 import logging
+from datetime import datetime
 from typing import Optional
 
-from .schema import Token, TokenInsights
+import aiohttp
 import marvin
+
+from .schema import Token, TokenInsights
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

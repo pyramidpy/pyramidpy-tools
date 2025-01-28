@@ -1,11 +1,10 @@
-import numpy as np
 from typing import List, Optional
-from langchain_openai import ChatOpenAI
-from langchain_openai import OpenAIEmbeddings
-from ragas import EvaluationDataset
-from ragas.metrics import LLMContextRecall, Faithfulness, FactualCorrectness
-from ragas import evaluate
+
+import numpy as np
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from ragas import EvaluationDataset, evaluate
 from ragas.llms import LangchainLLMWrapper
+from ragas.metrics import FactualCorrectness, Faithfulness, LLMContextRecall
 
 
 class RAG:

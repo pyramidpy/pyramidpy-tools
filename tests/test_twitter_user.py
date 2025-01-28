@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from pyramidpy_tools.twitter_user.schemas import TwitterUserAuth, TweepyAuth
-from pyramidpy_tools.twitter_user.base import TwitterUserAPI, TweepyTwitterApi, Account
+from pyramidpy_tools.twitter_user.base import Account, TweepyTwitterApi, TwitterUserAPI
+from pyramidpy_tools.twitter_user.schemas import TweepyAuth, TwitterUserAuth
 from pyramidpy_tools.twitter_user.tools import (
     get_twitter_api,
     twitter_get_latest_timeline,

@@ -1,8 +1,11 @@
+import io
 import tempfile
+
 import boto3
 from botocore.exceptions import ClientError
-import io
+
 from pyramidpy_tools import settings
+
 from .schemas import BucketConfig
 
 

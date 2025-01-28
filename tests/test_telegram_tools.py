@@ -1,12 +1,13 @@
 import pytest
-from controlflow.flows.flow import get_flow, Flow
+from controlflow.flows.flow import Flow, get_flow
+
+from pyramidpy_tools.settings import settings
 from pyramidpy_tools.telegram.base import TelegramAPI
 from pyramidpy_tools.telegram.schemas import (
+    SendDocumentRequest,
     SendMessageRequest,
     SendPhotoRequest,
-    SendDocumentRequest,
 )
-from pyramidpy_tools.settings import settings
 
 # Test constants
 TEST_CHAT_ID = settings.tool_provider.telegram_test_chat_id

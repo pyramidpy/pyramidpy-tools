@@ -1,9 +1,9 @@
-from typing import Any, Dict, List, Optional
 from datetime import timezone
+from typing import Any, Dict, List, Optional
 
 from twitter.account import Account
-from twitter.search import Search
 from twitter.scraper import Scraper
+from twitter.search import Search
 
 from pyramidpy_tools.settings import settings
 
@@ -12,10 +12,10 @@ from .schemas import (
     ReplyRequest,
     ScheduleTweetRequest,
     TimelineRequest,
+    TweepyAuth,
     TweetActionRequest,
     TweetRequest,
     TwitterUserAuth,
-    TweepyAuth,
 )
 
 

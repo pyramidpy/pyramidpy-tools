@@ -1,14 +1,16 @@
-from typing import Optional, Dict
+from typing import Dict, Optional
+
 import httpx
+
 from .schemas import (
     BirdeyeAuth,
-    TokenPriceRequest,
     HistoricalPriceParams,
-    TransactionParams,
+    SearchParams,
     SupportedChain,
     TokenOverviewParams,
     TokenOverviewResponse,
-    SearchParams,
+    TokenPriceRequest,
+    TransactionParams,
 )
 
 

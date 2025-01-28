@@ -1,8 +1,10 @@
 import asyncio
-from datetime import datetime
 import logging
+from datetime import datetime
 from typing import Optional
+
 from database import SessionLocal, TokenData
+
 from .schema import Token, TokenInsights
 
 logging.basicConfig(level=logging.INFO)

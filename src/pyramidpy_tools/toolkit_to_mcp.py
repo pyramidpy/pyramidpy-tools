@@ -1,7 +1,9 @@
-from fastmcp import FastMCP
-from pyramidpy_tools.toolkit import Toolkit
 import inspect
 from functools import wraps
+
+from fastmcp import FastMCP
+
+from pyramidpy_tools.toolkit import Toolkit
 
 
 def create_mcp_from_toolkit(toolkit: Toolkit, server_name: str = None) -> FastMCP:

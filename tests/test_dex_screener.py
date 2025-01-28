@@ -2,6 +2,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 from controlflow.tools.tools import Tool
+
 from pyramidpy_tools.dex_screener.base import DexScreenerAPI
 from pyramidpy_tools.dex_screener.schemas import DexScreenerResult, PairInfo, TokenInfo
 from pyramidpy_tools.dex_screener.tools import (

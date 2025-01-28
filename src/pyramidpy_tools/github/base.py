@@ -2,11 +2,10 @@ import asyncio
 import base64
 from typing import List, Optional
 
-from github import Github, GithubObject, Auth
+from github import Auth, Github, GithubObject, InputGitTreeElement
 from github.ContentFile import ContentFile
 from github.GithubException import GithubException
 from github.Repository import Repository
-from github import InputGitTreeElement
 
 from .schemas import (
     CreateBranchOptions,

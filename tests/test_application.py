@@ -1,11 +1,12 @@
 import json
+
 import pytest
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 
-from pyramidpy_tools.application.base import ApplicationStorage, ApplicationMetadata
-from pyramidpy_tools.vector_store.dbs.chroma import Chroma
+from pyramidpy_tools.application.base import ApplicationMetadata, ApplicationStorage
+from pyramidpy_tools.settings import EmbeddingSettings, Settings, StorageSettings
 from pyramidpy_tools.vector_store.base import get_vectorstore
-from pyramidpy_tools.settings import Settings, StorageSettings, EmbeddingSettings
+from pyramidpy_tools.vector_store.dbs.chroma import Chroma
 
 
 @pytest.fixture

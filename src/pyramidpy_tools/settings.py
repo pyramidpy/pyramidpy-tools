@@ -1,7 +1,7 @@
+from typing import Literal
+
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-from typing import Literal
 
 VectorStoreType = Literal["pg_vector", "chroma"]
 ChromaClientType = Literal["base", "http"] | str | None

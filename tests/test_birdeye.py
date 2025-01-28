@@ -1,18 +1,20 @@
+from unittest.mock import patch
+
 import pytest
-from controlflow.flows.flow import get_flow, Flow
+from controlflow.flows.flow import Flow, get_flow
+
+from pyramidpy_tools.birdeye.base import BirdeyeAPI
 from pyramidpy_tools.birdeye.schemas import (
     HistoricalPriceParams,
+    TokenOverviewParams,
     TokenPriceRequest,
     TransactionParams,
-    TokenOverviewParams,
+)
+from pyramidpy_tools.birdeye.tools import (
+    SupportedChain,
+    get_birdeye_api,
 )
 from pyramidpy_tools.settings import settings
-from pyramidpy_tools.birdeye.tools import (
-    get_birdeye_api,
-    SupportedChain,
-)
-from pyramidpy_tools.birdeye.base import BirdeyeAPI
-from unittest.mock import patch
 
 # Test constants - using real Solana addresses
 WSOL_ADDRESS = "So11111111111111111111111111111111111111112"

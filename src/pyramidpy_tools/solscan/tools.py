@@ -1,10 +1,12 @@
-from typing import Optional, List
+from typing import List, Optional
+
 from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
+
 from pyramidpy_tools.toolkit import Toolkit
 
 from .base import SolscanAPI
-from .schemas import SolscanAuth, AccountTransferParams
+from .schemas import AccountTransferParams, SolscanAuth
 
 AUTH_KEY = "solscan_token"
 

@@ -1,12 +1,14 @@
 import asyncio
 import logging
 import sys
-from typing import Optional, Callable, Any
+from typing import Any, Callable, Optional
+
 from aiogram import Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message
+
 from pyramidpy_tools.settings import settings
 
 logger = logging.getLogger(__name__)

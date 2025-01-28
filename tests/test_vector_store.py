@@ -1,10 +1,11 @@
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 from langchain.docstore.document import Document
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 
-from pyramidpy_tools.vector_store.dbs.pg_vector import PGVector
 from pyramidpy_tools.vector_store.dbs.chroma import Chroma
+from pyramidpy_tools.vector_store.dbs.pg_vector import PGVector
 
 
 @pytest.fixture

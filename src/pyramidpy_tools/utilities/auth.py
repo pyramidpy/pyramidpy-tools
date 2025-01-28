@@ -1,5 +1,4 @@
-from typing import Callable, Dict, Any
-
+from typing import Any, Callable, Dict
 
 AuthCallback = Callable[[str, Dict[str, Any]], Dict[str, Any] | None]
 

@@ -4,16 +4,15 @@ from controlflow.flows.flow import get_flow
 from controlflow.tools.tools import tool
 
 from ..toolkit import Toolkit
-
 from .base import DiscordAPI
 from .schemas import (
     AddReactionRequest,
     CreateChannelRequest,
     DeleteMessageRequest,
+    DiscordBotTokenSchema,
     EditMessageRequest,
     RemoveReactionRequest,
     SendMessageRequest,
-    DiscordBotTokenSchema,
 )
 
 

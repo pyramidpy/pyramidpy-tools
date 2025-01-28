@@ -1,7 +1,9 @@
 from typing import Literal
+
 import redis
-from fakeredis import FakeRedis
 from diskcache import Cache as DiskCache
+from fakeredis import FakeRedis
+
 from pyramidpy_tools.settings import settings
 
 

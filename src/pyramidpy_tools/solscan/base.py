@@ -1,6 +1,8 @@
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
 import aiohttp
-from .schemas import SolscanAuth, AccountTransferParams
+
+from .schemas import AccountTransferParams, SolscanAuth
 
 
 class SolscanAPI:

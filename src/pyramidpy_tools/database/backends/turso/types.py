@@ -1,8 +1,8 @@
 from typing import List, Optional
-from pydantic import BaseModel as PydanticBaseModel
 
-from ninja import Schema
 from apps.common.schema import BaseSchemaConfig
+from ninja import Schema
+from pydantic import BaseModel as PydanticBaseModel
 
 
 class BaseModel(PydanticBaseModel):
