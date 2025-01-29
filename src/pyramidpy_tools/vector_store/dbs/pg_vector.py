@@ -21,7 +21,7 @@ def get_table_name(uuid_str: str) -> str:
 
 
 def get_connection():
-    return vecs.create_client(settings.storage.postgres_url)
+    return vecs.create_client(settings.storage.pg_vector_url)
 
 
 def get_collection(name: str):

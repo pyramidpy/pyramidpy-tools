@@ -23,7 +23,7 @@ class StorageSettings(BaseSettings):
     """
 
     postgres_url: str | None = None
-    pgvector_url: str | None = Field(
+    pg_vector_url: str | None = Field(
         default=None, description="The URL of the PGVector database"
     )
     default_vector_store: VectorStoreType = "pg_vector"
@@ -46,10 +46,10 @@ class StorageSettings(BaseSettings):
     def validate(self):
         if (
             self.default_vector_store == "pg_vector"
-            and self.pgvector_url is None
+            and self.pg_vector_url is None
             and self.postgres_url
         ):
-            self.pgvector_url = self.postgres_url
+            self.pg_vector_url = self.postgres_url
         elif self.default_vector_store == "chroma" and self.chroma_url is None:
             raise ValueError("chroma_url must be provided")
         return self
